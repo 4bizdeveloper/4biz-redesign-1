@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Cyberr Color Palette: Shifted slightly lighter for 'shiny' effect */
+    --background: 240 15% 5%; /* #050510 */
+    --foreground: 0 0% 98%;
+  }
+
+  body {
+    /* REPLACEMENT: Instead of a solid color, we use a fixed linear gradient.
+       This prevents the "too dark" edges and creates a consistent glow.
+    */
+    background: linear-gradient(
+      135deg, 
+      #050510 0%, 
+      #08081a 50%, 
+      #050510 100%
+    );
+    background-attachment: fixed;
+    margin: 0;
+    color: white;
+    
+    /* Premium Font Rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  /* Cyberr Scanning Line - Adjusted opacity to be 'shiny' not distracting */
+  .animate-scan {
+    animation: scan 10s linear infinite;
+  }
+
+  @keyframes scan {
+    from { transform: translateY(-100vh); }
+    to { transform: translateY(100vh); }
+  }
+
+  /* Custom selection color: Cyan glow */
+  ::selection {
+    background-color: rgba(0, 242, 255, 0.3);
+    color: #ffffff;
+  }
+}
+
+/* Ensure the canvas doesn't create scrollbars */
+canvas {
+  display: block;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #050510; /* Match body for overscroll bounce */
+}
