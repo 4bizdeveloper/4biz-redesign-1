@@ -30,18 +30,16 @@ const AIChatButton = () => {
 
   return (
     <div className="fixed bottom-6 left-6 md:bottom-10 md:left-10 z-[999999] flex flex-row items-center pointer-events-none group">
-      <button onClick={openAIChat} className="ai-planet-orb pointer-events-auto" aria-label="Chat with AI">
-        {/* OPTIMIZED: Triple-layered harmonic pulse */}
-        <div className="absolute inset-0 rounded-full bg-[#00f2ff] animate-pulse-core opacity-20"></div>
-        <div className="absolute inset-0 rounded-full border-2 border-[#bf00ff]/30 animate-pulse-ring"></div>
-        <div className="absolute inset-0 rounded-full border border-[#ff00d4]/20 animate-pulse-ring-delayed"></div>
+      <button onClick={openAIChat} className="space-orb-core pointer-events-auto" aria-label="Chat with AI">
+        {/* ULTRA MODERN RADIATING PULSE - OUTWARD ONLY */}
+        <div className="radiating-energy energy-1"></div>
+        <div className="radiating-energy energy-2"></div>
+        <div className="radiating-energy energy-3"></div>
         
-        <div className="absolute inset-0 rounded-full shadow-[0_0_50px_rgba(0,242,255,0.4)] group-hover:shadow-[0_0_80px_rgba(191,0,255,0.7)] transition-shadow duration-700" />
-        <div className="ai-ring ai-ring-1"></div>
-        <div className="ai-ring ai-ring-2"></div>
-        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/40 to-transparent opacity-40 z-30 pointer-events-none" />
-
-        <svg viewBox="0 0 100 100" className="w-9 h-9 md:w-11 md:h-11 relative z-20 transition-all duration-500 group-hover:scale-110">
+        {/* GLOW OVERLAY */}
+        <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#ff00d4]/40 to-[#00f2ff]/40 blur-md animate-pulse" />
+        
+        <svg viewBox="0 0 100 100" className="w-9 h-9 md:w-11 md:h-11 relative z-20 transition-all duration-500 group-hover:scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]">
             <circle cx="28" cy="32" r="4.5" fill="white"/>
             <line x1="28" x2="42" y1="32" y2="48" stroke="white" strokeWidth="3" strokeLinecap="round"/>
             <path d="M50 42c-15 0-27 12-27 27s12 27 27 27 27-12 27-27-12-27-27-27z" fill="white"/>
@@ -54,9 +52,9 @@ const AIChatButton = () => {
         </svg>
       </button>
       
-      <div className="hidden lg:flex items-center ml-6 px-6 py-3 bg-[#03030b]/80 backdrop-blur-2xl border border-white/10 rounded-2xl text-white text-[11px] font-bold uppercase tracking-[0.3em] opacity-0 -translate-x-12 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500 ease-out pointer-events-none shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+      <div className="hidden lg:flex items-center ml-6 px-6 py-3 bg-[#03030b]/80 backdrop-blur-3xl border border-white/10 rounded-2xl text-white text-[11px] font-bold uppercase tracking-[0.4em] opacity-0 -translate-x-12 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-700 ease-out pointer-events-none shadow-[0_0_30px_rgba(255,0,212,0.2)]">
         <div className="flex items-center relative mr-4">
-          <span className="animate-ping absolute h-3 w-3 rounded-full bg-[#ff00d4] opacity-75"></span>
+          <span className="animate-ping absolute h-3 w-3 rounded-full bg-[#ff00d4]"></span>
           <span className="relative rounded-full h-3 w-3 bg-gradient-to-r from-[#00f2ff] to-[#ff00d4]"></span>
         </div>
         AI Assistant
@@ -64,33 +62,43 @@ const AIChatButton = () => {
 
       <style jsx>{`
         :global(#formilla-chat-button-inner), :global(.formilla-chat-launcher) { display: none !important; }
-        .ai-planet-orb {
-          width: 60px; height: 60px;
-          background: radial-gradient(circle at 35% 35%, #00f2ff, #bf00ff 65%, #ff00d4);
+        
+        .space-orb-core {
+          width: 65px; height: 65px;
+          background: conic-gradient(from 0deg, #00f2ff, #ff00d4, #00f2ff);
+          background-size: 200% 200%;
           border-radius: 50%; display: flex; align-items: center; justify-content: center;
-          position: relative; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          box-shadow: inset -6px -6px 20px rgba(0,0,0,0.5), 0 0 30px rgba(0,242,255,0.2);
+          position: relative; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+          box-shadow: 0 0 40px rgba(255, 0, 212, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.5);
+          animation: spin-gradient 4s linear infinite;
         }
-        @media (min-width: 768px) { .ai-planet-orb { width: 70px; height: 70px; } }
-        .ai-planet-orb:hover { transform: scale(1.15) rotate(15deg); }
 
-        /* OPTIMIZED KEYFRAMES */
-        @keyframes pulse-ring {
-          0% { transform: scale(1); opacity: 0.6; }
-          100% { transform: scale(2.4); opacity: 0; }
+        @keyframes spin-gradient {
+          0% { background-position: 0% 0%; filter: hue-rotate(0deg); }
+          100% { background-position: 100% 100%; filter: hue-rotate(360deg); }
         }
-        @keyframes pulse-core {
-          0%, 100% { transform: scale(1); opacity: 0.2; }
-          50% { transform: scale(1.1); opacity: 0.4; }
-        }
-        .animate-pulse-ring { animation: pulse-ring 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite; }
-        .animate-pulse-ring-delayed { animation: pulse-ring 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite 1.5s; }
-        .animate-pulse-core { animation: pulse-core 2s ease-in-out infinite; }
 
-        .ai-ring { position: absolute; inset: -12px; border-radius: 50%; border: 1.5px solid rgba(0, 242, 255, 0.15); pointer-events: none; }
-        .ai-ring-1 { animation: ai-orbit 3s ease-in-out infinite; }
-        .ai-ring-2 { animation: ai-orbit 4s ease-in-out infinite reverse; opacity: 0.4; inset: -20px; border-color: rgba(191,0,255,0.2); }
-        @keyframes ai-orbit { 0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.5; } 50% { transform: scale(1.15) rotate(180deg); opacity: 0.2; } }
+        @media (min-width: 768px) { .space-orb-core { width: 75px; height: 75px; } }
+        .space-orb-core:hover { transform: scale(1.1) translateY(-5px); box-shadow: 0 15px 50px rgba(0, 242, 255, 0.6); }
+
+        /* RADIATING ENERGY PULSE - NO CONTRACTION */
+        .radiating-energy {
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255,0,212,0.4) 0%, rgba(0,242,255,0) 70%);
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .energy-1 { animation: radiate 3s linear infinite; }
+        .energy-2 { animation: radiate 3s linear infinite 1s; }
+        .energy-3 { animation: radiate 3s linear infinite 2s; }
+
+        @keyframes radiate {
+          0% { transform: scale(1); opacity: 0.8; }
+          100% { transform: scale(3); opacity: 0; }
+        }
       `}</style>
     </div>
   );

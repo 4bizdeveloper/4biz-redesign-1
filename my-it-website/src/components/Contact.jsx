@@ -1,193 +1,120 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
+import React, { useState, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { FaPaperPlane } from 'react-icons/fa';
 
 const Contact = () => {
-  const [phone, setPhone] = useState('');
   const [status, setStatus] = useState('');
-  const [country, setCountry] = useState('ae');
 
-  useEffect(() => {
-    const detectCountry = async () => {
-      try {
-        const response = await fetch('https://ipapi.co/json/');
-        const data = await response.json();
-        if (data.country_code) {
-          setCountry(data.country_code.toLowerCase());
-        }
-      } catch (error) {
-        setCountry('ae'); 
-      }
-    };
-    detectCountry();
-  }, []);
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, 120]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('sending');
     const formData = new FormData(e.target);
-    formData.append('phone', phone);
-
+    
     try {
-      const response = await fetch('/api/send_mail.php', {
-        method: 'POST',
-        body: formData,
+      const response = await fetch('/api/send_mail.php', { 
+        method: 'POST', 
+        body: formData 
       });
       const result = await response.json();
-      if (result.success) setStatus('success');
-      else setStatus('error');
+      setStatus(result.success ? 'success' : 'error');
     } catch (error) {
       setStatus('error');
     }
   };
 
   return (
-    <section id="contact" className="pt-32 pb-44 px-6 relative overflow-hidden bg-transparent">
+    <section ref={containerRef} id="contact" className="py-12 md:py-32 pb-40 px-4 md:px-6 relative bg-transparent overflow-hidden">
       
-      {/* --- UNIFIED BACKGROUND (BLUE & ROSE MIX) --- */}
-      <div className="absolute inset-0 pointer-events-none -z-10">
-        <div className="absolute inset-0 bg-[#020207]/60" /> 
-        
-        {/* Ambient Rose Glow */}
-        <div className="absolute top-[-10%] right-[-5%] w-[70%] h-[70%] rounded-full bg-purple-600/10 blur-[120px]" />
-        
-        {/* Ambient Blue Glow */}
-        <div className="absolute bottom-[-10%] left-[-5%] w-[70%] h-[70%] rounded-full bg-cyan-600/10 blur-[120px]" />
-        
-        {/* Subtle Cyber Grid */}
-        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
-      </div>
+      {/* ATMOSPHERIC GLOW */}
+      <motion.div style={{ y: y1 }} className="absolute top-1/4 -right-20 w-[280px] md:w-[800px] h-[280px] md:h-[800px] bg-[#5fd9fb]/5 blur-[80px] md:blur-[160px] rounded-full pointer-events-none" />
+      <motion.div style={{ y: y2 }} className="absolute bottom-1/4 -left-20 w-[280px] md:w-[800px] h-[280px] md:h-[800px] bg-[#f028dd]/5 blur-[80px] md:blur-[160px] rounded-full pointer-events-none" />
 
       <div className="max-w-4xl mx-auto relative z-10">
-        
-        {/* --- HEADER INSIDE SAME BACKGROUND --- */}
-        <div className="text-center mb-16">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black text-white tracking-tighter uppercase mb-4"
-          >
-            Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Touch</span>
+        <div className="text-center mb-10 md:mb-16">
+          <motion.h2 className="text-4xl md:text-7xl font-black text-white tracking-tighter uppercase mb-4">
+            Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5fd9fb] to-[#f028dd]">Touch</span>
           </motion.h2>
-          <p className="text-white/40 tracking-[0.5em] uppercase text-[10px] font-bold">Initiate Secure Communication</p>
+          <p className="text-[#5fd9fb] tracking-[0.3em] md:tracking-[0.5em] uppercase text-[9px] md:text-[10px] font-bold opacity-60">Initiate Secure Transmission</p>
         </div>
 
-        {/* --- FORM CONTAINER --- */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-2xl mx-auto bg-white/[0.02] backdrop-blur-3xl border border-white/5 rounded-[40px] p-8 md:p-14 shadow-[0_0_80px_rgba(0,0,0,0.4)]"
-        >
-          <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+        <motion.div className="max-w-2xl mx-auto bg-white/[0.02] backdrop-blur-3xl rounded-[30px] md:rounded-[40px] p-6 md:p-14 border border-white/5 shadow-2xl">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-8">
             
-            <div className="flex flex-col gap-3">
-              <label className="text-cyan-400 text-[10px] font-black uppercase tracking-[0.4em] ml-2">Protocol: Name</label>
-              <input 
-                name="name" required type="text" placeholder="Ex: Alexander Vance" 
-                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-5 text-white focus:border-cyan-400/50 focus:bg-white/[0.05] outline-none transition-all placeholder:text-white/10"
-              />
+            <div className="flex flex-col gap-2 group">
+              <label className="text-[#5fd9fb] text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] ml-2">Protocol: Name</label>
+              <input name="name" required type="text" placeholder="Ex: Alexander Vance" className="protocol-input" />
             </div>
 
-            <div className="flex flex-col gap-3">
-              <label className="text-purple-400 text-[10px] font-black uppercase tracking-[0.4em] ml-2">Protocol: Email</label>
-              <input 
-                name="email" required type="email" placeholder="vance@network-node.io" 
-                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-5 text-white focus:border-purple-400/50 focus:bg-white/[0.05] outline-none transition-all placeholder:text-white/10"
-              />
+            <div className="flex flex-col gap-2 group">
+              <label className="text-[#f028dd] text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] ml-2">Protocol: Email</label>
+              <input name="email" required type="email" placeholder="vance@network-node.io" className="protocol-input" />
             </div>
 
-            <div className="flex flex-col gap-3">
-              <label className="text-white/50 text-[10px] font-black uppercase tracking-[0.4em] ml-2">Protocol: Signal</label>
-              <div className="modern-phone-input-container relative">
-                <PhoneInput
-                  country={country}
-                  value={phone}
-                  onChange={setPhone}
-                  placeholder="Enter contact frequency"
-                  containerClass="!bg-transparent"
-                  inputClass="!w-full !bg-white/[0.03] !border-white/10 !rounded-2xl !py-8 !text-white !text-lg !focus:border-white/30 !focus:bg-white/[0.05] !placeholder-white/10"
-                  buttonClass="!bg-transparent !border-none !rounded-l-2xl"
-                  dropdownClass="custom-phone-dropdown"
-                />
-              </div>
+            <div className="flex flex-col gap-2 group">
+              <label className="text-[#5fd9fb]/60 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] ml-2">Protocol: Signal</label>
+              <input name="phone" required type="tel" placeholder="+971 52 792 5100" className="protocol-input" />
             </div>
 
-            <div className="flex flex-col gap-3">
-              <label className="text-white/50 text-[10px] font-black uppercase tracking-[0.4em] ml-2">Protocol: Details</label>
-              <textarea 
-                name="message" required placeholder="Briefly explain your objective..." 
-                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-6 h-40 text-white focus:border-white/30 focus:bg-white/[0.05] outline-none transition-all placeholder:text-white/10 resize-none"
-              />
+            <div className="flex flex-col gap-2 group">
+              <label className="text-[#f028dd]/80 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] ml-2">Protocol: Details</label>
+              <textarea name="message" required placeholder="Briefly explain your objective..." className="protocol-input h-32 md:h-40 resize-none" />
             </div>
 
-            {/* --- IMPROVED ACTION BUTTON --- */}
-            <button 
-              disabled={status === 'sending'}
-              className="relative group overflow-hidden mt-6 py-6 bg-transparent border border-white/10 text-white font-black rounded-2xl transition-all uppercase tracking-[0.4em] text-[11px] flex items-center justify-center gap-4 active:scale-[0.98] disabled:opacity-50"
-            >
-              {/* Button Hover Background (Vibrant Blue) */}
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+            {/* ADJUSTED BUTTON: DEEPER COLORS FOR BETTER CONTRAST */}
+            <button disabled={status === 'sending'} className="relative group overflow-hidden py-5 md:py-6 rounded-xl md:rounded-2xl transition-all active:scale-[0.98] shadow-[0_0_30px_-10px_rgba(240,40,221,0.5)]">
+              {/* Darker Gradient Background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#1fb6e0] via-[#c415b2] to-[#1fb6e0] bg-[length:200%_100%] animate-gradient-shift" />
               
-              {/* Button Static Background (Gradients from your current hover colors) */}
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-pink-500/10 group-hover:opacity-0 transition-opacity duration-500 -z-10" />
-
-              <span className="relative z-10 transition-colors duration-300">
+              <div className="relative z-10 flex items-center justify-center gap-3 text-white font-black uppercase tracking-[0.4em] text-[10px] md:text-[11px] drop-shadow-md">
                 {status === 'sending' ? 'TRANSMITTING...' : 'INITIATE TRANSMISSION'}
-              </span>
-              <FaPaperPlane className="relative z-10 group-hover:translate-x-3 group-hover:-translate-y-2 transition-all duration-500" />
+                <FaPaperPlane className="group-hover:translate-x-2 transition-transform" />
+              </div>
             </button>
-
-            {status === 'success' && (
-              <p className="text-cyan-400 text-center text-[10px] font-black tracking-widest uppercase animate-pulse">
-                Data Packet Received Successfully
-              </p>
-            )}
+            
+            {status === 'success' && <p className="text-center text-[#5fd9fb] text-[10px] font-bold uppercase tracking-widest animate-pulse mt-2">Transmission Received</p>}
           </form>
         </motion.div>
       </div>
 
       <style>{`
-        /* Dropdown Alignment Fix */
-        .modern-phone-input-container { position: relative; }
-        .modern-phone-input-container .flag-dropdown {
-          background: transparent !important; border: none !important;
-          display: flex !important; align-items: center !important;
-        }
-        .modern-phone-input-container .selected-flag {
-          background: transparent !important; width: 60px !important;
-          display: flex !important; align-items: center !important; justify-content: center !important;
-        }
-        .modern-phone-input-container .custom-phone-dropdown {
-          background-color: rgba(10, 10, 18, 0.9) !important;
-          backdrop-filter: blur(25px) !important;
-          border: 1px solid rgba(255, 255, 255, 0.1) !important;
-          color: white !important;
-          border-radius: 15px !important;
-          margin-top: 12px !important;
-          left: 0 !important;
-          box-shadow: 0 20px 50px rgba(0,0,0,0.8) !important;
-        }
-        .modern-phone-input-container .form-control {
-          padding-left: 70px !important; background: transparent !important;
-        }
-        .modern-phone-input-container .selected-flag .flag { transform: scale(1.4) !important; }
-        
-        /* Remove stubborn white country highlights */
-        .modern-phone-input-container .country-list .country.highlight,
-        .modern-phone-input-container .country-list .country:hover {
-          background-color: rgba(34, 211, 238, 0.1) !important;
-          color: #22d3ee !important;
+        .protocol-input {
+          width: 100%;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 0.75rem;
+          padding: 1rem 1.25rem;
+          color: white;
+          outline: none;
+          transition: all 0.3s ease;
+          font-size: 0.875rem;
         }
 
-        /* Autofill transparency */
-        input:-webkit-autofill {
-          -webkit-text-fill-color: white !important;
-          -webkit-box-shadow: 0 0 0px 1000px #0a0a15 inset !important;
-          transition: background-color 5000s ease-in-out 0s;
+        @media (min-width: 768px) {
+          .protocol-input { border-radius: 1rem; padding: 1.25rem 1.5rem; }
         }
+
+        .protocol-input:focus {
+          border-color: rgba(95, 217, 251, 0.4);
+          background: rgba(255, 255, 255, 0.05);
+        }
+
+        .protocol-input::placeholder { color: rgba(255, 255, 255, 0.1); }
+
+        @keyframes gradient-shift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .animate-gradient-shift { animation: gradient-shift 3s ease infinite; }
       `}</style>
     </section>
   );
