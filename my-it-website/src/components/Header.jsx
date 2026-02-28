@@ -12,25 +12,40 @@ const Header = () => {
   const borderRadius = useTransform(scrollY, [0, 80], ['0px', '100px']);
   const headerHeight = useTransform(scrollY, [0, 80], ['80px', '70px']);
   
-  // Style Transitions
-  // Initially rgba(..., 0) makes it invisible. Transitions to 75% opacity.
-  const backgroundColor = useTransform(scrollY, [0, 80], ['rgba(3, 3, 11, 0)', 'rgba(3, 3, 11, 0.75)']);
+  // BASE BACKGROUND: Adjusted from 0.4 to 0.55 for a more "solid" glass feel
+  const backgroundColor = useTransform(
+    scrollY, 
+    [0, 80], 
+    ['rgba(3, 3, 11, 0)', 'rgba(3, 3, 11, 0.55)']
+  );
+
+  // HOLOGRAPHIC OVERLAY: Increased intensity slightly
+  const holoOpacity = useTransform(scrollY, [0, 80], [0, 0.9]);
   
-  // Initially transparent border. Transitions to white/10.
-  const borderColor = useTransform(scrollY, [0, 80], ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.1)']);
+  const borderColor = useTransform(
+    scrollY, 
+    [0, 80], 
+    ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.18)']
+  );
   
-  // Initially no blur. Transitions to 20px glass effect.
-  const backdropFilter = useTransform(scrollY, [0, 80], ['blur(0px)', 'blur(20px)']);
+  const backdropFilter = useTransform(
+    scrollY, 
+    [0, 80], 
+    ['blur(0px)', 'blur(24px)'] // Slightly deeper blur for better legibility
+  );
   
-  // Initially no shadow. Transitions to soft glow.
-  const shadowOpacity = useTransform(scrollY, [0, 80], ['0px 0px 0px rgba(0,0,0,0)', '0px 10px 50px rgba(0,0,0,0.4)']);
+  const shadowOpacity = useTransform(
+    scrollY, 
+    [0, 80], 
+    ['0px 0px 0px rgba(0,0,0,0)', '0px 10px 40px rgba(168, 85, 247, 0.2)']
+  );
 
   const navLinks = [
-    { name: 'HOME', href: '#home' },
+    { name: 'HOME', href: '/' },
     { name: 'ABOUT', href: '#about' },
     { name: 'SERVICES', href: '#services' },
     { name: 'CONTACT', href: '#contact' },
-    { name: 'BLOG', href: '#blog' },
+    
   ];
 
   return (
@@ -51,11 +66,25 @@ const Header = () => {
           backgroundColor, 
           borderColor,
           backdropFilter,
-          boxShadow: shadowOpacity
+          boxShadow: shadowOpacity,
+          overflow: 'hidden'
         }}
         className="fixed left-1/2 -translate-x-1/2 z-[100] border flex items-center justify-between px-6 md:px-12 transition-all duration-500 ease-out"
       >
-        {/* --- CLEAN LOGO SECTION --- */}
+        {/* --- HOLOGRAPHIC BACKGROUND OVERLAY --- */}
+        <motion.div 
+          style={{ opacity: holoOpacity }}
+          className="absolute inset-0 pointer-events-none -z-10"
+        >
+          {/* Blue Glow - Cyan (Top Left) */}
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/25 via-transparent to-transparent opacity-50" />
+          {/* Rose Glow - Purple (Bottom Right) */}
+          <div className="absolute inset-0 bg-gradient-to-tl from-purple-500/25 via-transparent to-transparent opacity-50" />
+          {/* Contrast Layer */}
+          <div className="absolute inset-0 bg-[#03030b]/30 mix-blend-overlay" />
+        </motion.div>
+
+        {/* --- LOGO --- */}
         <div className="relative flex items-center group cursor-pointer ml-4 md:ml-6">
           <div className="relative z-10 py-1">
             <img 
@@ -66,7 +95,7 @@ const Header = () => {
           </div>
         </div>
 
-        {/* --- NAVIGATION (PRESERVED) --- */}
+        {/* --- NAVIGATION --- */}
         <nav className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
             <a key={link.name} href={link.href} className="text-[11px] uppercase tracking-[0.25em] font-black text-white hover:text-[#00f2ff] transition-all duration-300 relative group">
@@ -76,7 +105,7 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* --- ACTION BUTTON (PRESERVED) --- */}
+        {/* --- ACTION BUTTON --- */}
         <div className="flex items-center gap-6">
           <button className="hidden sm:block group relative px-7 py-2.5 rounded-full overflow-hidden transition-all duration-500 hover:scale-105 bg-[#03030b] border border-white/10">
             <div className="absolute inset-[-250%] animate-[header-beam_3.5s_linear_infinite] opacity-100 group-hover:opacity-0 transition-opacity">
@@ -87,7 +116,7 @@ const Header = () => {
             <span className="relative z-10 text-white font-black tracking-widest text-[10px] uppercase">GET STARTED</span>
           </button>
 
-          {/* MOBILE TOGGLE (PRESERVED) */}
+          {/* MOBILE TOGGLE */}
           <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center z-[110]">
             <div className="flex flex-col gap-[6px] items-end">
               <motion.span animate={isOpen ? { rotate: 45, y: 7.5, width: '22px' } : { rotate: 0, y: 0, width: '22px' }} className="h-[2px] bg-white block origin-center" />

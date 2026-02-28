@@ -18,23 +18,19 @@ const ServiceCard = ({ title, desc, icon, img }) => {
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setOpacity(1)}
       onMouseLeave={() => setOpacity(0)}
-      // High transparency with light border - background space will show through
       className="group relative overflow-hidden rounded-[2.5rem] border border-white/20 bg-white/[0.03] backdrop-blur-sm p-8 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]"
     >
-      {/* 1. VIBRANT BACKGROUND IMAGE - No Grayscale, higher opacity */}
       <div 
         className="absolute inset-0 z-0 opacity-40 transition-transform duration-700 group-hover:scale-110"
         style={{
           backgroundImage: `url(${img})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          // Radial mask keeps it merged but allows the center to be very colorful
           maskImage: 'radial-gradient(circle at center, black 30%, transparent 95%)',
           WebkitMaskImage: 'radial-gradient(circle at center, black 30%, transparent 95%)',
         }}
       />
 
-      {/* 2. Interactive Spotlight - Light Cyan Glow */}
       <div
         className="pointer-events-none absolute -inset-px transition duration-300 z-10"
         style={{
@@ -43,7 +39,6 @@ const ServiceCard = ({ title, desc, icon, img }) => {
         }}
       />
 
-      {/* 3. High-Clarity Content */}
       <div className="relative z-20">
         <div className="text-5xl mb-6 drop-shadow-lg">
           {icon}
@@ -58,7 +53,6 @@ const ServiceCard = ({ title, desc, icon, img }) => {
         </p>
       </div>
 
-      {/* Glassy reflection effect on hover */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
     </div>
   );
@@ -123,14 +117,25 @@ const Services = () => {
   ];
 
   return (
-    <section id="services" className="py-24 px-6 lg:px-12 relative bg-transparent">
+    <section id="services" className="py-24 px-6 lg:px-12 relative bg-transparent overflow-hidden">
       
-      {/* Background Depth - Nebula Glows */}
+      {/* 1. ATMOSPHERIC OVERLAY (Mix of Rose & Blue) */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        {/* The primary color blend overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-950/20 via-transparent to-purple-950/20 mix-blend-overlay" />
+        
+        {/* Soft Radial Rose Glow */}
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-purple-600/10 blur-[120px] rounded-full animate-pulse" />
+        
+        {/* Soft Radial Blue Glow */}
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-cyan-600/10 blur-[120px] rounded-full animate-pulse" />
+      </div>
+
+      {/* 2. PRESERVED BACKGROUND GLOWS (Existing styles) */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-cyan-500/10 blur-[150px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-purple-500/10 blur-[150px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        
         <div className="text-center mb-20">
           <motion.span 
             initial={{ opacity: 0 }}
@@ -144,7 +149,7 @@ const Services = () => {
             whileInView={{ opacity: 1, y: 0 }}
             className="text-5xl md:text-7xl lg:text-8xl font-black text-white mt-6 tracking-tighter"
           >
-            Our Core <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-cyan-500">Capabilities</span>
+            Our Core <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-purple-500 drop-shadow-[0_0_15px_rgba(236,72,153,0.3)]">Capabilities</span>
           </motion.h2>
         </div>
 
