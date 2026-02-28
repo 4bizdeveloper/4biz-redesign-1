@@ -44,16 +44,30 @@ const Hero = () => {
           {/* 3. COLORFUL NEON BUTTONS */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             {/* Primary Gradient Button */}
-            <button className="group relative px-10 py-4 w-full sm:w-auto overflow-hidden rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(191,0,255,0.3)]">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#00f2ff] via-[#bf00ff] to-[#ff00d4] animate-gradient-x" />
-              <div className="absolute inset-[2px] bg-black/10 rounded-full group-hover:bg-transparent transition-colors duration-300" />
-              <span className="relative z-10 text-white font-bold tracking-widest text-xs">EXPLORE SERVICES</span>
-            </button>
+<button className="group relative px-10 py-4 w-full sm:w-auto rounded-full overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-[0_0_50px_10px_rgba(0,242,255,0.4)] bg-[#03030b] border border-white/10">
+<div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite] opacity-100 group-hover:opacity-0 transition-opacity duration-500">
+<div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_150deg,#00f2ff_180deg,#bf00ff_240deg,#ff00d4_300deg,transparent_360deg)]" />
+</div>
+<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-[#00f2ff] via-[#bf00ff] to-[#ff00d4] animate-pulse" />
+<div className="absolute inset-[1.5px] bg-[#03030b] rounded-full z-0 transition-all duration-500 group-hover:bg-transparent" />
+<span className="relative z-10 text-white font-black tracking-[0.3em] text-[10px] uppercase transition-all duration-500 group-hover:text-white group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,1)]">
+EXPLORE SERVICES
+</span>
+<div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-3/4 h-12 bg-[#00f2ff] blur-[40px] opacity-40 group-hover:opacity-0 transition-opacity z-0" />
+</button>
 
             {/* Secondary Glassmorphism Button */}
-            <button className="group relative px-10 py-4 w-full sm:w-auto overflow-hidden rounded-full border border-white/20 bg-white/5 backdrop-blur-xl transition-all duration-300 hover:border-[#bf00ff]/50 hover:shadow-[0_0_20px_rgba(191,0,255,0.2)]">
-              <span className="relative z-10 text-white font-bold tracking-widest text-xs transition-colors group-hover:text-[#00f2ff]">GET STARTED</span>
-            </button>
+            <button className="group relative px-10 py-4 w-full sm:w-auto rounded-full overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-[0_0_50px_10px_rgba(0,242,255,0.4)] bg-[#03030b] border border-white/10">
+<div className="absolute inset-[-150%] animate-[spin_3s_linear_infinite] opacity-100 group-hover:opacity-0 transition-opacity duration-500">
+<div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0deg,transparent_150deg,#00f2ff_180deg,#bf00ff_240deg,#ff00d4_300deg,transparent_360deg)]" />
+</div>
+<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-[#00f2ff] via-[#bf00ff] to-[#ff00d4] animate-pulse" />
+<div className="absolute inset-[1.5px] bg-[#03030b] rounded-full z-0 transition-all duration-500 group-hover:bg-transparent" />
+<span className="relative z-10 text-white font-black tracking-[0.3em] text-[10px] uppercase transition-all duration-500 group-hover:text-white group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,1)]">
+GET STARTED
+</span>
+<div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-3/4 h-12 bg-[#00f2ff] blur-[40px] opacity-40 group-hover:opacity-0 transition-opacity z-0" />
+</button>
           </div>
         </motion.div>
       </div>
