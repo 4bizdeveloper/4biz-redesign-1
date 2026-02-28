@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 
+// 1. IMPORT the logo here. This tells the bundler to include the image 
+// and gives you a dynamic URL that works after building the app.
+import logo from '../assets/images/4biz_logo.png'; 
+
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { scrollY } = useScroll();
@@ -56,8 +60,9 @@ const Header = () => {
           </div>
           
           <div className="relative z-10 px-4 py-2 flex items-center">
+            {/* 2. Use the imported 'logo' variable here */}
             <img 
-              src="https://4bizinternational.com/assets/images/logo/test.png" 
+              src={logo} 
               alt="4Biz Logo" 
               className="h-8 md:h-10 w-auto brightness-125 drop-shadow-[0_0_15px_rgba(0,242,255,0.5)]"
             />
@@ -87,7 +92,6 @@ const Header = () => {
              </span>
           </button>
 
-          {/* Toggle Menu */}
           <button 
             onClick={() => setIsOpen(!isOpen)}
             className="lg:hidden flex flex-col gap-1.5 p-2 z-[110]"
