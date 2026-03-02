@@ -1,120 +1,197 @@
 import React, { useState, useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { FaPaperPlane } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { RiRocketLine, RiCheckboxCircleLine, RiErrorWarningLine } from 'react-icons/ri';
+import itplanet_image from '../assets/images/itplanet.png';
 
 const Contact = () => {
-  const [status, setStatus] = useState('');
-
+  const [status, setStatus] = useState(''); // '', 'sending', 'success', 'error'
+  const [msg, setMsg] = useState('');
   const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
 
-  const y1 = useTransform(scrollYProgress, [0, 1], [0, -120]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  // ... (imports remain the same)
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus('sending');
-    const formData = new FormData(e.target);
-    
-    try {
-      const response = await fetch('/api/send_mail.php', { 
-        method: 'POST', 
-        body: formData 
-      });
-      const result = await response.json();
-      setStatus(result.success ? 'success' : 'error');
-    } catch (error) {
-      setStatus('error');
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setStatus('sending');
+  setMsg('');
+
+  const formData = {
+    name: e.target.name.value,
+    email: e.target.email.value,
+    phone: e.target.phone.value,
+    message: e.target.message.value,
   };
 
+  try {
+    // Relative path is safer for production on Hostinger
+    const response = await fetch('./send-mail.php', { 
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+
+    // Check if the server actually returned JSON
+    const text = await response.text();
+    let result;
+    try {
+        result = JSON.parse(text);
+    } catch (e) {
+        throw new Error("Server did not return valid JSON. Check PHP file paths.");
+    }
+
+    if (result.status === 'success') {
+      setStatus('success');
+      e.target.reset();
+    } else {
+      setStatus('error');
+      setMsg(result.message || "Unknown Server Error");
+    }
+  } catch (error) {
+    setStatus('error');
+    setMsg(error.message || "Connection failed. Check server path.");
+  }
+};
+
+// ... (rest of the component remains the same)
+
+
   return (
-    <section ref={containerRef} id="contact" className="py-12 md:py-32 pb-40 px-4 md:px-6 relative bg-transparent overflow-hidden">
-      
-      {/* ATMOSPHERIC GLOW */}
-      <motion.div style={{ y: y1 }} className="absolute top-1/4 -right-20 w-[280px] md:w-[800px] h-[280px] md:h-[800px] bg-[#5fd9fb]/5 blur-[80px] md:blur-[160px] rounded-full pointer-events-none" />
-      <motion.div style={{ y: y2 }} className="absolute bottom-1/4 -left-20 w-[280px] md:w-[800px] h-[280px] md:h-[800px] bg-[#f028dd]/5 blur-[80px] md:blur-[160px] rounded-full pointer-events-none" />
+    <section id="contact" className="py-20 px-4 md:px-10 relative bg-transparent overflow-hidden">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+        
+       
+{/* IMAGE SIDE - LEGACY-STYLE ULTRA MODERN MERGE */}
+<div className="flex justify-center order-2 lg:order-1 relative select-none pointer-events-none">
+  <motion.div 
+    className="relative w-full max-w-[500px] aspect-square flex items-center justify-center"
+    initial={{ opacity: 0, scale: 0.9 }}
+    whileInView={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+  >
+    
+    {/* 1. ATMOSPHERIC BACKGLOW (Legacy Depth) */}
+    <div className="absolute w-[80%] h-[80%] bg-cyan-500/10 rounded-full blur-[100px] -z-10" />
 
-      <div className="max-w-4xl mx-auto relative z-10">
-        <div className="text-center mb-10 md:mb-16">
-          <motion.h2 className="text-4xl md:text-7xl font-black text-white tracking-tighter uppercase mb-4">
-            Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5fd9fb] to-[#f028dd]">Touch</span>
-          </motion.h2>
-          <p className="text-[#5fd9fb] tracking-[0.3em] md:tracking-[0.5em] uppercase text-[9px] md:text-[10px] font-bold opacity-60">Initiate Secure Transmission</p>
-        </div>
+    {/* 2. LAYERED HUD RINGS (Matches Legacy Section) */}
+    <div className="absolute inset-0 border border-white/5 rounded-full scale-110" />
+    <motion.div 
+      className="absolute inset-4 border border-dashed border-cyan-500/20 rounded-full"
+      animate={{ rotate: 360 }}
+      transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+    />
+    
+    {/* Floating Data Dots */}
+    <motion.div 
+      className="absolute inset-0 rounded-full"
+      animate={{ rotate: -360 }}
+      transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
+    >
+      <div className="absolute top-0 left-1/2 w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_15px_#22d3ee] animate-pulse" />
+      <div className="absolute bottom-0 left-1/2 w-1 h-1 bg-purple-500 rounded-full shadow-[0_0_15px_#a855f7] animate-pulse" />
+    </motion.div>
 
-        <motion.div className="max-w-2xl mx-auto bg-white/[0.02] backdrop-blur-3xl rounded-[30px] md:rounded-[40px] p-6 md:p-14 border border-white/5 shadow-2xl">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-8">
-            
-            <div className="flex flex-col gap-2 group">
-              <label className="text-[#5fd9fb] text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] ml-2">Protocol: Name</label>
-              <input name="name" required type="text" placeholder="Ex: Alexander Vance" className="protocol-input" />
-            </div>
+    {/* 3. THE HOLOGRAPHIC IMAGE CORE */}
+    <motion.div 
+      className="relative z-10 w-[85%] h-[85%] rounded-full border border-white/10 p-1 bg-[#050510]/40 backdrop-blur-md shadow-2xl overflow-hidden"
+      animate={{
+        y: [-12, 12, -12],
+      }}
+      transition={{
+        duration: 20,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+    >
+      <div 
+        className="w-full h-full rounded-full relative overflow-hidden"
+        style={{
+          // Sharp circular mask with soft edge merge
+          maskImage: 'radial-gradient(circle at center, black 40%, transparent 98%)',
+          WebkitMaskImage: 'radial-gradient(circle at center, black 40%, transparent 98%)',
+        }}
+      >
+        <motion.img 
+          src={itplanet_image} 
+          alt="Celestial Body"
+          className="w-full h-full object-cover saturate-[1.5] brightness-[0.8] mix-blend-lighten opacity-80" 
+          animate={{ 
+            scale: [1.1, 1.2, 1.1],
+            rotate: [0, 2, 0] 
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        />
 
-            <div className="flex flex-col gap-2 group">
-              <label className="text-[#f028dd] text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] ml-2">Protocol: Email</label>
-              <input name="email" required type="email" placeholder="vance@network-node.io" className="protocol-input" />
-            </div>
-
-            <div className="flex flex-col gap-2 group">
-              <label className="text-[#5fd9fb]/60 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] ml-2">Protocol: Signal</label>
-              <input name="phone" required type="tel" placeholder="+971 52 792 5100" className="protocol-input" />
-            </div>
-
-            <div className="flex flex-col gap-2 group">
-              <label className="text-[#f028dd]/80 text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] ml-2">Protocol: Details</label>
-              <textarea name="message" required placeholder="Briefly explain your objective..." className="protocol-input h-32 md:h-40 resize-none" />
-            </div>
-
-            {/* ADJUSTED BUTTON: DEEPER COLORS FOR BETTER CONTRAST */}
-            <button disabled={status === 'sending'} className="relative group overflow-hidden py-5 md:py-6 rounded-xl md:rounded-2xl transition-all active:scale-[0.98] shadow-[0_0_30px_-10px_rgba(240,40,221,0.5)]">
-              {/* Darker Gradient Background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#1fb6e0] via-[#c415b2] to-[#1fb6e0] bg-[length:200%_100%] animate-gradient-shift" />
-              
-              <div className="relative z-10 flex items-center justify-center gap-3 text-white font-black uppercase tracking-[0.4em] text-[10px] md:text-[11px] drop-shadow-md">
-                {status === 'sending' ? 'TRANSMITTING...' : 'INITIATE TRANSMISSION'}
-                <FaPaperPlane className="group-hover:translate-x-2 transition-transform" />
-              </div>
-            </button>
-            
-            {status === 'success' && <p className="text-center text-[#5fd9fb] text-[10px] font-bold uppercase tracking-widest animate-pulse mt-2">Transmission Received</p>}
-          </form>
-        </motion.div>
+        {/* 4. INTERNAL HOLOGRAPHIC LIGHTING (Matches Legacy Gradient) */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 via-transparent to-purple-500/20 mix-blend-overlay" />
+        
+        {/* Directional "Void" Shadow for background merging */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-transparent to-transparent" />
       </div>
 
-      <style>{`
-        .protocol-input {
+      {/* 5. PROTECTIVE GLASS SHINE (The "Modern" Touch) */}
+      <div className="absolute inset-0 rounded-full border-[2px] border-white/5 shadow-[inset_0_0_40px_rgba(255,255,255,0.05)] pointer-events-none" />
+    </motion.div>
+
+    {/* 6. DECORATIVE SIDE PARTICLES */}
+    <div className="hidden md:block absolute top-10 right-0 w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping" />
+    <div className="hidden md:block absolute bottom-10 left-0 w-1 h-1 bg-purple-400 rounded-full animate-pulse" />
+
+  </motion.div>
+</div>
+
+
+        {/* FORM SIDE */}
+        <div className="order-1 lg:order-2">
+          <h3 className="text-4xl md:text-6xl font-black text-white mb-8 tracking-tighter">
+            Initiate Secure <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">Transmission</span>
+          </h3>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <input required name="name" placeholder="Name" className="contact-input" />
+              <input required name="email" type="email" placeholder="Email" className="contact-input" />
+            </div>
+            <input required name="phone" type="tel" placeholder="Phone (Signal)" className="contact-input" />
+            <textarea required name="message" placeholder="Mission Brief" className="contact-input h-32 resize-none" />
+
+            <button 
+              disabled={status === 'sending'}
+              className="w-full py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold rounded-xl tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-50"
+            >
+              {status === 'sending' ? 'TRANSMITTING...' : 'ESTABLISH LINK'}
+              <RiRocketLine />
+            </button>
+
+            {/* FEEDBACK MESSAGES */}
+            <AnimatePresence>
+              {status === 'success' && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono rounded-lg flex items-center gap-2">
+                  <RiCheckboxCircleLine /> TRANSMISSION SUCCESSFUL. DATA RECEIVED.
+                </motion.div>
+              )}
+              {status === 'error' && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono rounded-lg flex items-center gap-2">
+                  <RiErrorWarningLine /> UPLINK FAILED: {msg}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </form>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .contact-input {
           width: 100%;
-          background: rgba(255, 255, 255, 0.03);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 0.75rem;
-          padding: 1rem 1.25rem;
+          background: rgba(255,255,255,0.03);
+          border: 1px solid rgba(255,255,255,0.1);
+          padding: 1rem;
           color: white;
+          border-radius: 12px;
           outline: none;
-          transition: all 0.3s ease;
-          font-size: 0.875rem;
+          transition: 0.3s;
         }
-
-        @media (min-width: 768px) {
-          .protocol-input { border-radius: 1rem; padding: 1.25rem 1.5rem; }
-        }
-
-        .protocol-input:focus {
-          border-color: rgba(95, 217, 251, 0.4);
-          background: rgba(255, 255, 255, 0.05);
-        }
-
-        .protocol-input::placeholder { color: rgba(255, 255, 255, 0.1); }
-
-        @keyframes gradient-shift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .animate-gradient-shift { animation: gradient-shift 3s ease infinite; }
+        .contact-input:focus { border-color: #22d3ee; background: rgba(255,255,255,0.07); }
       `}</style>
     </section>
   );
