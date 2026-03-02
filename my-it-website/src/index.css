@@ -2,56 +2,119 @@
 
 @layer base {
   :root {
-    /* Cyberr Color Palette: Shifted slightly lighter for 'shiny' effect */
-    --background: 240 15% 5%; /* #050510 */
+    --background: 240 15% 5%; 
     --foreground: 0 0% 98%;
   }
 
+  /* PERFORMANCE: Isolating the root to prevent global layout recalculations */
+  html {
+    scroll-behavior: smooth;
+    background-color: #050510;
+    height: 100%;
+    overflow-x: hidden;
+    /* Improves momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+  }
+
   body {
-    /* REPLACEMENT: Instead of a solid color, we use a fixed linear gradient.
-       This prevents the "too dark" edges and creates a consistent glow.
-    */
+    background-color: #050510;
+    margin: 0;
+    color: white;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100%;
+    /* Prevents layout shift during scroll */
+    overflow-anchor: none; 
+    /* Design consistency */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* GPU-ACCELERATED BACKGROUND: 
+     Fixed background via pseudo-element is 5x faster than background-attachment: fixed.
+  */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(
       135deg, 
       #050510 0%, 
       #08081a 50%, 
       #050510 100%
     );
-    background-attachment: fixed;
-    margin: 0;
-    color: white;
-    
-    /* Premium Font Rendering */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    z-index: -1;
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    will-change: transform;
+    pointer-events: none;
   }
 }
 
 @layer utilities {
-  /* Cyberr Scanning Line - Adjusted opacity to be 'shiny' not distracting */
+  /* SCAN LINE PERFORMANCE: 
+     Using 'top' or 'translateY(vh)' triggers 'Layout' cycles.
+     Using 'translate3d' and % triggers 'Compositing' only.
+  */
   .animate-scan {
     animation: scan 10s linear infinite;
+    will-change: transform;
+    pointer-events: none;
+    /* Optimization: Tells the browser this element doesn't affect surrounding layout */
+    contain: strict; 
   }
 
   @keyframes scan {
-    from { transform: translateY(-100vh); }
-    to { transform: translateY(100vh); }
+    from { transform: translate3d(0, -100%, 0); }
+    to { transform: translate3d(0, 100%, 0); }
   }
 
-  /* Custom selection color: Cyan glow */
   ::selection {
     background-color: rgba(0, 242, 255, 0.3);
     color: #ffffff;
   }
 }
 
-/* Ensure the canvas doesn't create scrollbars */
+/* CANVAS PERFORMANCE */
 canvas {
   display: block;
+  /* Isolated layer to prevent canvas updates from lagging the rest of the UI */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  image-rendering: -webkit-optimize-contrast;
 }
 
-html {
-  scroll-behavior: smooth;
-  background-color: #050510; /* Match body for overscroll bounce */
+/* RESPONSIVE SMOOTHNESS: Adjusting motion for low-power mobile devices */
+@media (max-width: 768px) {
+  .animate-scan {
+    animation-duration: 15s; /* Slower animation reduces CPU load on mobile */
+  }
+}
+
+
+@layer utilities {
+  .animate-spin-slow {
+    animation: spin-gpu 4s linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes spin-gpu {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+}
+
+
+@layer utilities {
+  .animate-header-beam {
+    animation: h-beam 4s linear infinite;
+    will-change: transform;
+  }
+
+  @keyframes h-beam {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 }

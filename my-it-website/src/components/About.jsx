@@ -1,30 +1,50 @@
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import girlImage from '../assets/images/girl1.png';
+import girlImage from '../assets/images/girl1.avif';
 
 const About = () => {
-  return (
-    <section id="about" className="relative min-h-screen flex items-center overflow-hidden bg-transparent py-12 md:py-20">
-      
-      {/* 1. Image Container - Optimized Glow Colors */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        
-        {/* COLOR OPTIMIZED: Increased opacity for richer depth */}
-        <div className="absolute left-[8%] top-1/2 -translate-y-1/2 w-[350px] md:w-[650px] h-[350px] md:h-[650px] bg-purple-500/20 blur-[110px] md:blur-[150px] rounded-full" />
-        <div className="absolute left-0 top-[25%] md:top-[35%] w-[250px] md:w-[450px] h-[250px] md:h-[450px] bg-cyan-400/20 blur-[90px] md:blur-[110px] rounded-full" />
+  // Memoize performance-heavy style objects to prevent re-calculations
+  const maskStyles = useMemo(() => ({
+    maskImage: 'radial-gradient(circle at 38% 48%, black 15%, transparent 75%)',
+    WebkitMaskImage: 'radial-gradient(circle at 38% 48%, black 15%, transparent 75%)',
+  }), []);
 
+  return (
+    <section 
+      id="about" 
+      className="relative min-h-screen flex items-center overflow-hidden bg-transparent py-12 md:py-20 transform-gpu"
+      style={{ 
+        contentVisibility: 'auto', 
+        containIntrinsicSize: '0 800px' // Provides a height hint to prevent scrollbar jumping
+      }}
+    >
+      
+      {/* 1. OPTIMIZED IMAGE & BLUR LAYER */}
+      <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+        
+        {/* Background Blurs - Using translate3d for GPU acceleration */}
+        <div 
+          className="absolute left-[8%] top-1/2 w-[350px] md:w-[650px] h-[350px] md:h-[650px] bg-purple-500/10 blur-[100px] md:blur-[130px] rounded-full" 
+          style={{ transform: 'translate3d(0,-50%,0)', willChange: 'transform' }}
+        />
+        <div 
+          className="absolute left-0 top-[25%] md:top-[35%] w-[250px] md:w-[450px] h-[250px] md:h-[450px] bg-cyan-400/10 blur-[80px] md:blur-[100px] rounded-full" 
+          style={{ transform: 'translate3d(0,0,0)', willChange: 'transform' }}
+        />
+
+        {/* Masked Image Container */}
         <motion.div 
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute left-0 top-0 w-full lg:w-[50%] h-[55vh] lg:h-full bg-no-repeat bg-contain bg-center lg:bg-left"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          className="absolute left-0 top-0 w-full lg:w-[55%] h-[55vh] lg:h-full bg-no-repeat bg-contain bg-center lg:bg-left"
           style={{
+            ...maskStyles,
             backgroundImage: `url(${girlImage})`,
-            maskImage: 'radial-gradient(circle at 38% 48%, black 15%, transparent 75%)',
-            WebkitMaskImage: 'radial-gradient(circle at 38% 48%, black 15%, transparent 75%)',
-            
-            /* COLOR OPTIMIZED: Slight saturation boost for professional finish */
-            filter: 'contrast(1.1) brightness(1.05) saturate(1.15)',
+            filter: 'contrast(1.05) brightness(1.05)',
+            transform: 'translateZ(0)', 
+            backfaceVisibility: 'hidden', // Prevents micro-stuttering during scroll
           }}
         />
       </div>
@@ -32,50 +52,47 @@ const About = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="flex flex-col lg:flex-row items-center">
           
-          <div className="h-[48vh] lg:h-auto lg:w-[50%] pointer-events-none" />
+          {/* Spacer for the background image on desktop */}
+          <div className="h-[40vh] lg:h-auto lg:w-[45%] pointer-events-none" />
 
-          {/* 2. Text Content */}
-          <div className="w-full lg:w-[50%] lg:pl-16 mt-6 lg:mt-0">
+          {/* 2. TEXT CONTENT */}
+          <div className="w-full lg:w-[55%] lg:pl-12 mt-6 lg:mt-0">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "circOut" }}
+              className="will-change-transform"
             >
               <div className="flex items-center gap-3 mb-6">
-                {/* COLOR OPTIMIZED: Cyan to Blue gradient for the line */}
-                <div className="h-[2px] w-12 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
-                <span className="text-cyan-300 font-mono text-[11px] font-bold tracking-[0.5em] uppercase">
+                <div className="h-[1.5px] w-12 bg-gradient-to-r from-cyan-400 to-blue-500" />
+                <span className="text-cyan-300 font-mono text-[11px] font-bold tracking-[0.5em] uppercase antialiased">
                   Fast and Without Friction
                 </span>
               </div>
 
-              <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 leading-[0.95] tracking-tighter">
+              <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 leading-[0.9] tracking-tighter">
                 Where <br />
-                {/* COLOR OPTIMIZED: High-contrast White to Cyan-Purple gradient */}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-300 to-purple-400 drop-shadow-[0_0_25px_rgba(34,211,238,0.4)]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-300 to-purple-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.2)]">
                   IT solutions
                 </span> <br />
                 meet scale
               </h2>
 
-              {/* COLOR OPTIMIZED: zinc-200 for description to contrast the white header */}
-              <p className="text-lg md:text-xl text-zinc-200 leading-relaxed font-normal max-w-xl mb-10 drop-shadow-sm">
+              <p className="text-lg md:text-xl text-zinc-300/80 leading-relaxed font-normal max-w-xl mb-10 antialiased">
                 Innovative IT infrastructure designed for international growth. 
                 We remove the technical barriers that slow you down, allowing your digital assets to flourish.
               </p>
 
-              {/* Stats Footer */}
-              <div className="flex flex-col sm:flex-row gap-8 sm:gap-12 pt-10 border-t border-white/10">
+              {/* Stats Footer - Optimized Border rendering */}
+              <div className="flex flex-col sm:flex-row gap-8 sm:gap-12 pt-10 border-t border-white/[0.08]">
                 <div className="flex flex-col gap-1">
-                  {/* COLOR OPTIMIZED: Neon cyan accent */}
                   <p className="text-cyan-400 font-black text-[12px] uppercase tracking-widest">Reliability</p>
-                  <p className="text-white text-sm font-medium">99.9% Uptime Architecture</p>
+                  <p className="text-white/90 text-sm font-medium">99.9% Uptime Architecture</p>
                 </div>
                 <div className="flex flex-col gap-1">
-                  {/* COLOR OPTIMIZED: Neon purple accent */}
                   <p className="text-purple-400 font-black text-[12px] uppercase tracking-widest">Operations</p>
-                  <p className="text-white text-sm font-medium">UAE-Based, Global Support</p>
+                  <p className="text-white/90 text-sm font-medium">UAE-Based, Global Support</p>
                 </div>
               </div>
             </motion.div>

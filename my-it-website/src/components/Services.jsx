@@ -1,27 +1,48 @@
-import React, { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useState, useMemo } from 'react';
+import { motion, useMotionValue, useSpring, useInView } from 'framer-motion';
+
+// Asset Imports
+import webDevImg from '../assets/images/web-development.avif';
+import digitalMarketingImg from '../assets/images/digital-marketing.avif';
+import cyberSecurityImg from '../assets/images/cyber-security.avif';
+import crmErpImg from '../assets/images/crm-erp-software.avif';
+import contentMgmtImg from '../assets/images/content-management.avif';
+import domainHostingImg from '../assets/images/domain-hosting.avif';
+import mobileAppImg from '../assets/images/mobile-app-development.avif';
+import itConsultingImg from '../assets/images/it-consulting.avif';
+import ecommerceImg from '../assets/images/ecommerce.avif';
 
 const ServiceCard = ({ title, desc, icon, img }) => {
   const divRef = useRef(null);
-  const [opacity, setOpacity] = useState(0);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
 
-  const handleMouseMove = (e) => {
-    if (!divRef.current) return;
-    const rect = divRef.current.getBoundingClientRect();
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
+  // Smooth out mouse movement to prevent "choppy" spotlight on high-DPI screens
+  const smoothX = useSpring(mouseX, { stiffness: 500, damping: 50 });
+  const smoothY = useSpring(mouseY, { stiffness: 500, damping: 50 });
+
+  function handleMouseMove({ currentTarget, clientX, clientY }) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
 
   return (
-    <div
+    <motion.div
       ref={divRef}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setOpacity(1)}
-      onMouseLeave={() => setOpacity(0)}
-      className="group relative overflow-hidden rounded-[2.5rem] border border-white/20 bg-white/[0.03] backdrop-blur-sm p-8 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      className="group relative overflow-hidden rounded-[2.5rem] border border-white/20 bg-white/[0.03] backdrop-blur-sm p-8 transition-colors duration-500 hover:border-cyan-400 transform-gpu"
+      style={{ 
+        contain: 'layout paint',
+        willChange: 'transform'
+      }}
     >
+      {/* Background Image - Masked & Optimized */}
       <div 
-        className="absolute inset-0 z-0 opacity-40 transition-transform duration-700 group-hover:scale-110"
+        className="absolute inset-0 z-0 opacity-40 transition-transform duration-700 group-hover:scale-110 pointer-events-none"
         style={{
           backgroundImage: `url(${img})`,
           backgroundSize: 'cover',
@@ -31,115 +52,63 @@ const ServiceCard = ({ title, desc, icon, img }) => {
         }}
       />
 
-      <div
-        className="pointer-events-none absolute -inset-px transition duration-300 z-10"
+      {/* High-Performance Dynamic Spotlight */}
+      <motion.div
+        className="pointer-events-none absolute -inset-px transition-opacity duration-300 z-10 opacity-0 group-hover:opacity-100"
         style={{
-          opacity,
-          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(34, 211, 238, 0.15), transparent 40%)`,
+          background: useMemo(() => `radial-gradient(600px circle at var(--x) var(--y), rgba(34, 211, 238, 0.15), transparent 40%)`, []),
+          '--x': smoothX,
+          '--y': smoothY,
         }}
       />
 
-      <div className="relative z-20">
-        <div className="text-5xl mb-6 drop-shadow-lg">
-          {icon}
-        </div>
-        
-        <h3 className="text-2xl font-bold mb-4 text-white tracking-tight drop-shadow-md">
-          {title}
-        </h3>
-        
-        <p className="text-white text-sm md:text-base leading-relaxed font-medium drop-shadow-md">
-          {desc}
-        </p>
+      <div className="relative z-20 pointer-events-none">
+        <div className="text-5xl mb-6 drop-shadow-lg">{icon}</div>
+        <h3 className="text-2xl font-bold mb-4 text-white tracking-tight drop-shadow-md">{title}</h3>
+        <p className="text-white text-sm md:text-base leading-relaxed font-medium drop-shadow-md opacity-90">{desc}</p>
       </div>
 
+      {/* Decorative Overlay Gradient */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
-    </div>
+    </motion.div>
   );
 };
 
 const Services = () => {
-  const serviceData = [
-    {
-      title: "Web Development",
-      desc: "Full-stack solutions using modern JS frameworks. We build scalable portals, high-speed hosting, and enterprise applications.",
-      icon: "💻",
-      img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      title: "Digital Marketing",
-      desc: "Comprehensive SEO, SMM, and Performance Marketing. Precision branding and content strategies designed for global ROI.",
-      icon: "📊",
-      img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      title: "Cyber Security",
-      desc: "Advanced security featuring AI threat monitoring, dark web investigation, and endpoint protection for enterprise assets.",
-      icon: "🛡️",
-      img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      title: "CRM / ERP Solutions",
-      desc: "Customized Enterprise Resource Planning and CRM software to automate workflows and optimize organizational productivity.",
-      icon: "⚙️",
-      img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      title: "Content Management",
-      desc: "Expert CMS solutions and WordPress development designed for high performance and easy management.",
-      icon: "📝",
-      img: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      title: "Domain & Hosting",
-      desc: "Secure hosting infrastructure ensuring 99.9% uptime with robust cloud and online storage solutions.",
-      icon: "☁️",
-      img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      title: "Mobile App Dev",
-      desc: "Custom iOS and Android applications with intuitive interfaces and seamless cross-platform performance.",
-      icon: "📱",
-      img: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      title: "IT Consulting",
-      desc: "Strategic technical guidance to help brands navigate their digital transformation journey with confidence.",
-      icon: "🤝",
-      img: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      title: "E-Commerce",
-      desc: "Complete online store solutions with integrated payment gateways and secure, optimized checkout paths.",
-      icon: "🛒",
-      img: "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&q=80&w=800"
-    }
-  ];
+  const serviceData = useMemo(() => [
+    { title: "Web Development", desc: "Full-stack solutions using modern JS frameworks.", icon: "💻", img: webDevImg },
+    { title: "Digital Marketing", desc: "Comprehensive SEO, SMM, and Performance Marketing.", icon: "📊", img: digitalMarketingImg },
+    { title: "Cyber Security", desc: "Advanced security featuring AI threat monitoring.", icon: "🛡️", img: cyberSecurityImg },
+    { title: "CRM / ERP Solutions", desc: "Customized Enterprise Resource Planning and CRM software.", icon: "⚙️", img: crmErpImg },
+    { title: "Content Management", desc: "Expert CMS solutions and WordPress development.", icon: "📝", img: contentMgmtImg },
+    { title: "Domain & Hosting", desc: "Secure hosting infrastructure ensuring 99.9% uptime.", icon: "☁️", img: domainHostingImg },
+    { title: "Mobile App Dev", desc: "Custom iOS and Android applications.", icon: "📱", img: mobileAppImg },
+    { title: "IT Consulting", desc: "Strategic technical guidance for digital transformation.", icon: "🤝", img: itConsultingImg },
+    { title: "E-Commerce", desc: "Complete online store solutions with integrated payments.", icon: "🛒", img: ecommerceImg }
+  ], []);
 
   return (
-    <section id="services" className="py-24 px-6 lg:px-12 relative bg-transparent overflow-hidden">
-      
-      {/* 1. ATMOSPHERIC OVERLAY (Mix of Rose & Blue) */}
+    <section 
+      id="services" 
+      className="py-24 px-6 lg:px-12 relative bg-transparent overflow-hidden transform-gpu"
+      style={{ 
+        contentVisibility: 'auto', 
+        containIntrinsicSize: '0 1200px' // Critical for removing scroll jumps
+      }}
+    >
+      {/* ATMOSPHERIC OVERLAY - GPU Accelerated animations */}
       <div className="absolute inset-0 pointer-events-none z-0">
-        {/* The primary color blend overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-950/20 via-transparent to-purple-950/20 mix-blend-overlay" />
-        
-        {/* Soft Radial Rose Glow */}
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-purple-600/10 blur-[120px] rounded-full animate-pulse" />
-        
-        {/* Soft Radial Blue Glow */}
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-cyan-600/10 blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-purple-600/10 blur-[120px] rounded-full animate-soft-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-cyan-600/10 blur-[120px] rounded-full animate-soft-pulse" />
       </div>
-
-      {/* 2. PRESERVED BACKGROUND GLOWS (Existing styles) */}
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-cyan-500/10 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-purple-500/10 blur-[150px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-20">
           <motion.span 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
             className="text-cyan-400 font-mono text-xs md:text-sm tracking-[0.6em] uppercase font-black"
           >
             Digital Excellence Since 2010
@@ -147,6 +116,7 @@ const Services = () => {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             className="text-5xl md:text-7xl lg:text-8xl font-black text-white mt-6 tracking-tighter"
           >
             Our Core <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-white to-purple-500 drop-shadow-[0_0_15px_rgba(236,72,153,0.3)]">Capabilities</span>
@@ -159,6 +129,17 @@ const Services = () => {
           ))}
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes soft-pulse {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.05); }
+        }
+        .animate-soft-pulse {
+          animation: soft-pulse 8s ease-in-out infinite;
+          will-change: transform, opacity;
+        }
+      `}</style>
     </section>
   );
 };

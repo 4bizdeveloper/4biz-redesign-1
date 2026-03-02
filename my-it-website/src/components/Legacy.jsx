@@ -1,48 +1,64 @@
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView, useSpring, useMotionValue } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
-import legacy_image from '../assets/images/legacy.png';
+import legacy_image from '../assets/images/legacy.avif';
 
 const StatCounter = ({ value, suffix = "" }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-  const [count, setCount] = useState(0);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const [displayValue, setDisplayValue] = useState(0);
+  
+  // Use Spring for much smoother, hardware-accelerated number counting
+  const springValue = useSpring(0, {
+    stiffness: 40,
+    damping: 20,
+    restDelta: 0.001
+  });
 
   useEffect(() => {
     if (isInView) {
-      let start = 0;
-      const end = parseInt(value);
-      const duration = 2.5; 
-      let startTime = null;
-
-      const animate = (timestamp) => {
-        if (!startTime) startTime = timestamp;
-        const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
-        setCount(Math.floor(progress * (end - start) + start));
-        if (progress < 1) requestAnimationFrame(animate);
-      };
-      requestAnimationFrame(animate);
+      springValue.set(parseInt(value));
     }
-  }, [isInView, value]);
+  }, [isInView, value, springValue]);
 
-  return <span ref={ref}>{count}{suffix}</span>;
+  useEffect(() => {
+    return springValue.on("change", (latest) => {
+      setDisplayValue(Math.floor(latest));
+    });
+  }, [springValue]);
+
+  return <span ref={ref}>{displayValue}{suffix}</span>;
 };
 
 const Legacy = () => {
   const containerRef = useRef(null);
+  
+  // Optimized scroll tracking with restricted range to prevent jitter
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
 
+  // Use transform-gpu via will-change for buttery smooth parallax
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -120]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, 120]);
 
   return (
-    <section ref={containerRef} id="legacy" className="py-20 lg:py-32 px-4 md:px-10 overflow-hidden relative bg-transparent">
+    <section 
+      ref={containerRef} 
+      id="legacy" 
+      className="py-20 lg:py-32 px-4 md:px-10 overflow-hidden relative bg-transparent transform-gpu"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '800px' }}
+    >
       
-      {/* ATMOSPHERIC SPACE DEPTH - Scaled for Mobile */}
-      <motion.div style={{ y: y1 }} className="absolute top-1/4 -right-20 w-[300px] md:w-[900px] h-[300px] md:h-[900px] bg-cyan-500/10 blur-[100px] md:blur-[160px] rounded-full pointer-events-none" />
-      <motion.div style={{ y: y2 }} className="absolute bottom-1/4 -left-20 w-[300px] md:w-[900px] h-[300px] md:h-[900px] bg-purple-600/10 blur-[100px] md:blur-[160px] rounded-full pointer-events-none" />
+      {/* ATMOSPHERIC SPACE DEPTH - Optimized with will-change */}
+      <motion.div 
+        style={{ y: y1 }} 
+        className="absolute top-1/4 -right-20 w-[300px] md:w-[900px] h-[300px] md:h-[900px] bg-cyan-500/10 blur-[100px] md:blur-[160px] rounded-full pointer-events-none will-change-transform" 
+      />
+      <motion.div 
+        style={{ y: y2 }} 
+        className="absolute bottom-1/4 -left-20 w-[300px] md:w-[900px] h-[300px] md:h-[900px] bg-purple-600/10 blur-[100px] md:blur-[160px] rounded-full pointer-events-none will-change-transform" 
+      />
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center relative z-10">
         
@@ -50,9 +66,9 @@ const Legacy = () => {
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center lg:text-left order-2 lg:order-1"
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center lg:text-left order-2 lg:order-1 will-change-transform"
         >
           <div className="inline-flex items-center gap-4 mb-6 md:mb-8 justify-center lg:justify-start">
              <div className="h-[2px] w-8 md:w-12 bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.8)]" />
@@ -74,7 +90,7 @@ const Legacy = () => {
           
           {/* HOLOGRAPHIC DASHBOARD STATS */}
           <div className="relative group inline-block w-full md:w-auto">
-            <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-3xl md:rounded-[3rem] blur-2xl opacity-50"></div>
+            <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-3xl md:rounded-[3rem] blur-2xl opacity-50" />
             <div className="relative flex flex-row items-center justify-center gap-6 md:gap-12 px-6 md:px-12 py-8 md:py-10 rounded-3xl md:rounded-[3rem] bg-white/[0.03] border border-white/10 backdrop-blur-3xl shadow-2xl">
               <div className="flex flex-col">
                 <span className="text-4xl md:text-7xl font-black text-white leading-none">
@@ -97,13 +113,9 @@ const Legacy = () => {
         {/* Right: HOLOGRAPHIC IMAGE PROJECTOR */}
         <motion.div 
           style={{ y: typeof window !== 'undefined' && window.innerWidth > 1024 ? y1 : 0 }}
-          className="relative flex items-center justify-center py-10 lg:py-20 order-1 lg:order-2"
+          className="relative flex items-center justify-center py-10 lg:py-20 order-1 lg:order-2 transform-gpu will-change-transform"
         >
-          {/* NESTED HUD CIRCLES */}
-          <div className="absolute inset-0 border border-white/5 rounded-full scale-90 md:scale-110" />
-          <div className="absolute inset-2 md:inset-4 border-[1px] border-dashed border-cyan-500/20 rounded-full animate-[spin_60s_linear_infinite]" />
-          
-          {/* THE IMAGE CORE */}
+          {/* Container uses fixed aspect ratio to prevent layout jumping */}
           <div className="relative z-10 w-full max-w-[280px] md:max-w-[450px] aspect-square rounded-full overflow-hidden border border-white/10 p-1 bg-[#050510]/40 backdrop-blur-md shadow-2xl">
             <div 
               className="w-full h-full rounded-full relative overflow-hidden"
@@ -115,21 +127,33 @@ const Legacy = () => {
               <motion.img 
                 src={legacy_image}
                 alt="Digital Evolution" 
-                className="w-full h-full object-cover saturate-[1.6] brightness-[0.7] opacity-60 mix-blend-lighten scale-110"
+                className="w-full h-full object-cover saturate-[1.6] brightness-[0.7] opacity-60 mix-blend-lighten scale-110 will-change-transform"
                 animate={{ scale: [1.1, 1.15, 1.1] }}
                 transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 via-transparent to-purple-500/20" />
             </div>
-            <div className="absolute inset-0 rounded-full border-[2px] border-white/5 shadow-[inset_0_0_40px_rgba(255,255,255,0.05)]" />
+            {/* HUD Elements using CSS animation for better main-thread performance */}
+            <div className="absolute inset-0 border border-white/5 rounded-full scale-90 md:scale-110 pointer-events-none" />
+            <div className="absolute inset-2 md:inset-4 border-[1px] border-dashed border-cyan-500/20 rounded-full animate-slow-spin pointer-events-none" />
           </div>
 
-          {/* DECORATIVE PARTICLES (Hidden on very small screens for cleanliness) */}
           <div className="hidden md:block absolute top-0 right-10 w-2 h-2 bg-cyan-400 rounded-full animate-ping" />
           <div className="hidden md:block absolute bottom-10 left-0 w-1 h-1 bg-purple-400 rounded-full animate-pulse" />
         </motion.div>
 
       </div>
+
+      <style jsx>{`
+        @keyframes slow-spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-slow-spin {
+          animation: slow-spin 60s linear infinite;
+        }
+      `}</style>
     </section>
   );
 };

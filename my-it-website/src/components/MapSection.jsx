@@ -1,112 +1,151 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const MapSection = () => {
-  const locations = [
+  const locations = useMemo(() => [
     {
       id: 0,
-      city: "Dubai",
-      title: "UAE Headquarters",
-      src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3608.846921732776!2d55.294803509592!3d25.242080377588984!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f5d3f84a0cd39%3A0x6834edd5ea42e51d!2s4BIZ%20International%20LLC!5e0!3m2!1sen!2sin!4v1772309152300!5m2!1sen!2sin",
-      color: "from-[#5fd9fb] to-[#2882f0]"
+      city: "Dubai, UAE",
+      title: "Global Headquarters",
+      address: "Crystal Building, Al Karama",
+      src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3913.184593989201!2d75.83155460914165!3d11.247827288884881!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba65b26cb564cd7%3A0x6e4ea8183d688e13!2s4biz%20International!5e0!3m2!1sen!2sin!4v1772309205095!5m2!1sen!2sin8",
+      color: "from-cyan-400 to-blue-600",
     },
     {
       id: 1,
-      city: "HiLite Business Park",
-      title: "Regional Node - Kozhikode",
-      src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3913.184593989201!2d75.83155460914165!3d11.247827288884881!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba65b26cb564cd7%3A0x6e4ea8183d688e13!2s4biz%20International!5e0!3m2!1sen!2sin!4v1772309205095!5m2!1sen!2sin",
-      color: "from-[#f028dd] to-[#a828f0]"
+      city: "Kozhikode, IN",
+      title: "HiLite Business Park",
+      address: "Regional Tech Node",
+      src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3913.184593989201!2d75.83155460914165!3d11.247827288884881!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba65b26cb564cd7%3A0x6e4ea8183d688e13!2s4biz%20International!5e0!3m2!1sen!2sin!4v1772309205095!5m2!1sen!2sin9",
+      color: "from-purple-500 to-pink-600",
     },
     {
       id: 2,
-      city: "Nadakkavu",
-      title: "4Biz International - Kozhikode",
-      src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62604.73787830177!2d75.70025652167969!3d11.276392500000007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba65f2df7358683%3A0xdd71f8c39ea9198!2s4biz%20International%20-%20Nadakkavu!5e0!3m2!1sen!2sin!4v1772309247081!5m2!1sen!2sin",
-      color: "from-[#5fd9fb] to-[#f028dd]"
+      city: "Nadakkavu, IN",
+      title: "Operational Hub",
+      address: "4Biz International Branch",
+      src: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62604.73787830177!2d75.70025652167969!3d11.276392500000007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba65f2df7358683%3A0xdd71f8c39ea9198!2s4biz%20International%20-%20Nadakkavu!5e0!3m2!1sen!2sin!4v1772309247081!5m2!1sen!2sin0",
+      color: "from-blue-400 to-cyan-500",
     }
-  ];
+  ], []);
 
   const [activeNode, setActiveNode] = useState(0);
 
   return (
-    <section id="map" className="py-24 md:py-32 px-4 md:px-6 relative bg-transparent overflow-hidden">
-      {/* ATMOSPHERIC SPACE DUST */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(95,217,251,0.05)_0%,transparent_70%)] pointer-events-none" />
+    <section 
+      id="map" 
+      className="py-20 md:py-32 px-4 md:px-10 relative bg-transparent overflow-hidden will-change-transform"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '1000px' }}
+    >
+      {/* BACKGROUND ATMOSPHERE */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.04)_0%,transparent_70%)] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-12 md:mb-20">
+        <header className="mb-12">
           <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-7xl font-black text-white tracking-tighter uppercase mb-4"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-4xl md:text-6xl font-black text-white tracking-tight uppercase pr-4"
           >
-            Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5fd9fb] to-[#f028dd]">Coordinates</span>
+            Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">Nodes</span>
           </motion.h2>
-          <p className="text-[#5fd9fb] tracking-[0.4em] uppercase text-[10px] font-bold opacity-60">Strategic Operational Centers</p>
-        </div>
+          <div className="h-1 w-20 bg-cyan-500 mt-2 rounded-full" />
+        </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
-          {/* NAVIGATION NODES */}
-          <div className="lg:col-span-4 flex flex-col gap-4">
+          {/* NAVIGATION MENU */}
+          <div className="lg:col-span-4 flex flex-col gap-4 order-2 lg:order-1">
             {locations.map((loc) => (
               <button
                 key={loc.id}
                 onClick={() => setActiveNode(loc.id)}
-                className={`group relative p-6 rounded-2xl border transition-all duration-500 text-left overflow-hidden ${
+                className={`group relative p-5 rounded-2xl border-2 transition-all duration-300 text-left ${
                   activeNode === loc.id 
-                  ? 'bg-white/10 border-white/20 shadow-[0_0_30px_rgba(95,217,251,0.15)]' 
-                  : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.05]'
+                  ? 'bg-white/10 border-cyan-500/50 shadow-[0_0_30px_rgba(34,211,238,0.15)] scale-[1.02]' 
+                  : 'bg-white/[0.03] border-white/5 hover:border-white/20 hover:bg-white/[0.06]'
                 }`}
               >
-                {activeNode === loc.id && (
-                  <motion.div layoutId="activeGlow" className={`absolute inset-y-0 left-0 w-1 bg-gradient-to-b ${loc.color}`} />
-                )}
-                <h3 className={`text-xs font-black uppercase tracking-[0.2em] mb-1 ${activeNode === loc.id ? 'text-white' : 'text-white/40'}`}>
-                  {loc.city}
-                </h3>
-                <p className={`text-[11px] font-bold uppercase tracking-widest ${activeNode === loc.id ? 'text-[#5fd9fb]' : 'text-white/20'}`}>
-                  {loc.title}
-                </p>
+                <div className="flex justify-between items-center relative z-10 pointer-events-none">
+                  <div>
+                    <h3 className="text-white font-black text-sm uppercase tracking-wider mb-1">
+                      {loc.city}
+                    </h3>
+                    <p className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${
+                      activeNode === loc.id ? 'text-cyan-400' : 'text-white/30'
+                    }`}>
+                      {loc.title}
+                    </p>
+                  </div>
+                  <div className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-500 ${
+                    activeNode === loc.id ? 'border-cyan-400 bg-cyan-400/20 shadow-[0_0_15px_rgba(34,211,238,0.4)]' : 'border-white/10'
+                  }`}>
+                    <div className={`w-2 h-2 rounded-full ${activeNode === loc.id ? 'bg-cyan-400 animate-pulse' : 'bg-white/20'}`} />
+                  </div>
+                </div>
               </button>
             ))}
           </div>
 
-          {/* INTERACTIVE MAP VIEWPORT */}
-          <div className="lg:col-span-8 relative group">
-            <div className="relative rounded-[30px] md:rounded-[40px] border border-white/10 bg-white/5 backdrop-blur-3xl overflow-hidden shadow-2xl aspect-[4/3] md:aspect-video">
+          {/* MAP VIEWPORT - Optimized for Layout Stability */}
+          <div className="lg:col-span-8 relative order-1 lg:order-2">
+            <div className="relative h-full rounded-[2.5rem] border border-white/10 bg-zinc-950 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] min-h-[400px] sm:min-h-[450px] md:min-h-[550px] transform-gpu">
               
-              {/* CYBER FRAME DECOR */}
-              <div className="absolute top-6 left-6 w-4 h-4 border-t-2 border-l-2 border-[#5fd9fb]/40 z-20" />
-              <div className="absolute top-6 right-6 w-4 h-4 border-t-2 border-r-2 border-[#f028dd]/40 z-20" />
-              <div className="absolute bottom-6 left-6 w-4 h-4 border-b-2 border-l-2 border-[#f028dd]/40 z-20" />
-              <div className="absolute bottom-6 right-6 w-4 h-4 border-b-2 border-r-2 border-[#5fd9fb]/40 z-20" />
+              {/* INFO BOX */}
+              <div className="absolute top-5 left-5 z-30 bg-white/90 backdrop-blur-xl border border-white/20 p-5 rounded-2xl shadow-2xl max-w-[260px] pointer-events-none select-none">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-ping" />
+                  <span className="text-zinc-500 font-bold text-[8px] uppercase tracking-[0.2em]">Signal Established</span>
+                </div>
+                <h4 className="text-zinc-900 font-black text-base uppercase leading-tight">
+                  {locations[activeNode].city}
+                </h4>
+                <p className="text-zinc-500 text-[10px] font-medium mt-1 leading-relaxed">
+                  {locations[activeNode].address}
+                </p>
+              </div>
 
-              <iframe 
-                src={locations[activeNode].src} 
-                width="100%" 
-                height="100%" 
-                style={{ 
-                  border: 0, 
-                  filter: 'invert(90%) hue-rotate(180deg) brightness(95%) contrast(90%)' 
-                }} 
-                allowFullScreen={true}
-                loading="lazy" 
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Global Node Map"
-                className="w-full h-full opacity-60 group-hover:opacity-100 transition-opacity duration-700"
-              />
-              
-              {/* SCANLINE EFFECT overlay */}
-              <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_4px,3px_100%] z-10 opacity-30" />
-            </div>
+              {/* ULTRA MODERN EXPAND BUTTON */}
+              <motion.a 
+                href={locations[activeNode].src} 
+                target="_blank" 
+                rel="noreferrer"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className="absolute top-5 right-5 z-30 group overflow-hidden"
+              >
+                <div className="relative px-8 py-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl shadow-[0_0_20px_rgba(34,211,238,0.3)] border border-white/20 transition-all group-hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]">
+                  <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.3)_50%,transparent_75%)] bg-[length:250%_250%] animate-shimmer pointer-events-none" />
+                  <span className="text-white font-black text-[10px] uppercase tracking-[0.2em] relative z-10">
+                    Expand View
+                  </span>
+                </div>
+              </motion.a>
 
-            <div className="mt-8 flex items-center justify-center gap-6">
-               <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-               <p className="text-zinc-500 text-[9px] uppercase tracking-[0.4em] whitespace-nowrap">
-                 Transmission Link <span className="text-[#5fd9fb] animate-pulse">Stable</span>
-               </p>
-               <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+              {/* THE MAP FRAME - Performance Optimized */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeNode}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="w-full h-full absolute inset-0"
+                >
+                  <iframe 
+                    src={locations[activeNode].src} 
+                    width="100%" 
+                    height="100%" 
+                    style={{ border: 0, filter: 'none' }} 
+                    allowFullScreen={true}
+                    loading="lazy" 
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title={locations[activeNode].title}
+                    className="w-full h-full pointer-events-auto"
+                  />
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
 
@@ -114,14 +153,22 @@ const MapSection = () => {
       </div>
 
       <style jsx>{`
-        iframe {
-          pointer-events: all;
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
         }
-        /* Mobile optimization: Ensure the map doesn't capture scroll unintentionally */
-        @media (max-width: 768px) {
-          .aspect-[4/3] {
-            height: 350px;
-          }
+        .animate-shimmer {
+          animation: shimmer 4s infinite linear;
+        }
+        
+        /* Smooth scrolling fixes */
+        :global(html) {
+          scroll-behavior: smooth;
+        }
+
+        /* Prevents hover effects from triggering during scroll */
+        :global(.is-scrolling) {
+          pointer-events: none;
         }
       `}</style>
     </section>

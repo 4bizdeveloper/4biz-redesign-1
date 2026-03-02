@@ -1,158 +1,166 @@
-import React, { useState } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import logo from '../assets/images/4biz_logo.png'; 
+import React, { useState, useMemo, useEffect } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence, useSpring } from 'framer-motion';
+import logo from '../assets/images/4biz_logo.avif'; 
 
 const Header = () => {
+  const phoneNumber = "971527925100";
+  const message = encodeURIComponent("Hello! I'd like to inquire about your services.");
+
   const [isOpen, setIsOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const checkRes = () => setIsDesktop(window.innerWidth >= 1024);
+    checkRes();
+    window.addEventListener('resize', checkRes, { passive: true });
+    return () => window.removeEventListener('resize', checkRes);
+  }, []);
+
   const { scrollY } = useScroll();
   
-  // Layout Transforms
-  const headerWidth = useTransform(scrollY, [0, 80], ['100%', '92%']);
-  const headerY = useTransform(scrollY, [0, 80], [0, 20]);
-  const borderRadius = useTransform(scrollY, [0, 80], ['0px', '100px']);
-  const headerHeight = useTransform(scrollY, [0, 80], ['80px', '70px']);
+  // Refined spring for maximum responsiveness without jitter
+  const smoothY = useSpring(scrollY, { 
+    stiffness: 100, 
+    damping: 20, 
+    mass: 0.2, 
+    restDelta: 0.001 
+  });
+
+  const scrollRange = [0, 80];
   
-  const backgroundColor = useTransform(
-    scrollY, 
-    [0, 80], 
-    ['rgba(3, 3, 11, 0)', 'rgba(3, 3, 11, 0.55)']
+  // PERFORMANCE FIX: ScaleX/Y are GPU-accelerated; Width/Height are NOT.
+  const headerScaleX = useTransform(smoothY, scrollRange, isDesktop ? [1, 0.92] : [1, 1]);
+  const headerScaleY = useTransform(smoothY, scrollRange, isDesktop ? [1, 0.9] : [1, 1]);
+  const headerYOffset = useTransform(smoothY, scrollRange, isDesktop ? [0, 20] : [0, 0]);
+  const borderRadius = useTransform(smoothY, scrollRange, isDesktop ? ['0px', '40px'] : ['0px', '0px']);
+  
+  // VISUALS: Increased transparency for a more premium glass effect
+  const backgroundColor = useTransform(smoothY, scrollRange, 
+    isDesktop ? ['rgba(3, 3, 11, 0)', 'rgba(3, 3, 11, 0.72)'] : ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']
+  );
+  const borderColor = useTransform(smoothY, scrollRange, 
+    isDesktop ? ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.1)'] : ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']
+  );
+  const backdropFilter = useTransform(smoothY, scrollRange, 
+    isDesktop ? ['blur(0px)', 'blur(16px)'] : ['blur(0px)', 'blur(0px)']
   );
 
-  const holoOpacity = useTransform(scrollY, [0, 80], [0, 0.9]);
-  
-  const borderColor = useTransform(
-    scrollY, 
-    [0, 80], 
-    ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.18)']
-  );
-  
-  const backdropFilter = useTransform(
-    scrollY, 
-    [0, 80], 
-    ['blur(0px)', 'blur(24px)'] 
-  );
-  
-  const shadowOpacity = useTransform(
-    scrollY, 
-    [0, 80], 
-    ['0px 0px 0px rgba(0,0,0,0)', '0px 10px 40px rgba(168, 85, 247, 0.2)']
-  );
+  const holoOpacity = useTransform(smoothY, scrollRange, isDesktop ? [0, 1] : [0, 0]);
 
-  const navLinks = [
+  const navLinks = useMemo(() => [
     { name: 'HOME', href: '/' },
     { name: 'ABOUT', href: '#about' },
     { name: 'SERVICES', href: '#services' },
     { name: 'CONTACT', href: '#contact' },
-  ];
+  ], []);
 
   return (
     <>
-      <style>{`
-        @keyframes header-beam {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
-
       <motion.header
         style={{ 
-          width: headerWidth, 
-          y: headerY, 
+          width: '100%',
+          y: headerYOffset, 
+          scaleX: headerScaleX,
+          scaleY: headerScaleY,
           borderRadius, 
-          height: headerHeight, 
           backgroundColor, 
           borderColor,
           backdropFilter,
-          boxShadow: shadowOpacity,
-          overflow: 'hidden'
+          WebkitBackdropFilter: backdropFilter,
+          x: '-50%',
+          left: '50%',
+          // Crucial for performance: tells the browser to promote this to its own layer
+          willChange: 'transform, background-color, backdrop-filter',
+          backfaceVisibility: 'hidden',
+          WebkitFontSmoothing: 'antialiased',
+          transformStyle: 'preserve-3d',
         }}
-        className="fixed left-1/2 -translate-x-1/2 z-[100] border flex items-center justify-between px-6 md:px-12 transition-all duration-500 ease-out"
+        className="fixed z-[100] lg:border flex items-center justify-between px-6 md:px-12 h-[72px] lg:h-[80px] overflow-hidden pointer-events-auto origin-top"
       >
-        <motion.div 
-          style={{ opacity: holoOpacity }}
-          className="absolute inset-0 pointer-events-none -z-10"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/25 via-transparent to-transparent opacity-50" />
-          <div className="absolute inset-0 bg-gradient-to-tl from-purple-500/25 via-transparent to-transparent opacity-50" />
-          <div className="absolute inset-0 bg-[#03030b]/30 mix-blend-overlay" />
-        </motion.div>
+        {isDesktop && (
+          <motion.div 
+            style={{ opacity: holoOpacity }}
+            className="absolute inset-0 pointer-events-none -z-10 overflow-hidden transform-gpu"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5 opacity-30" />
+          </motion.div>
+        )}
 
-        {/* WRAP THE LOGO IN AN ANCHOR TAG */}
-      <a href="/" className="relative flex items-center group cursor-pointer ml-4 md:ml-6">
-      <div className="relative z-10 py-1">
-        <img 
-        src={logo} 
-        alt="4Biz Logo" 
-        className="h-9 md:h-12 w-auto transition-transform duration-500 group-hover:scale-105" />
-      </div>
-      </a>
+        {/* LOGO - ml-4 (mobile) and ml-8 (desktop) */}
+        <motion.a 
+          href="/" 
+          style={{ scaleY: useTransform(smoothY, scrollRange, [1, 1.1]) }} // Counter-scale to keep logo crisp
+          className="relative flex items-center group cursor-pointer shrink-0 transform-gpu ml-4 lg:ml-8"
+        >
+          <img 
+            src={logo} 
+            alt="4Biz Logo" 
+            loading="eager"
+            className="h-10 lg:h-11 w-auto transition-transform duration-500 group-hover:scale-105" 
+          />
+        </motion.a>
 
         <nav className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a key={link.name} href={link.href} className="text-[11px] uppercase tracking-[0.25em] font-black text-white hover:text-[#00f2ff] transition-all duration-300 relative group">
+            <a 
+              key={link.name} 
+              href={link.href} 
+              className="text-[11px] uppercase tracking-[0.25em] font-black text-white/90 hover:text-[#00f2ff] transition-colors duration-300 relative group antialiased"
+            >
               {link.name}
-              <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-gradient-to-r from-[#00f2ff] via-[#bf00ff] to-[#ff00d4] transition-all duration-500 group-hover:w-full" />
+              <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-gradient-to-r from-[#00f2ff] to-[#bf00ff] transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
         </nav>
 
-        <div className="flex items-center gap-6">
-          <button className="hidden sm:block group relative px-7 py-2.5 rounded-full overflow-hidden transition-all duration-500 hover:scale-105 bg-[#03030b] border border-white/10">
-            <div className="absolute inset-[-250%] animate-[header-beam_3.5s_linear_infinite] opacity-100 group-hover:opacity-0 transition-opacity">
+        <div className="flex items-center gap-4">
+          <button className="hidden sm:block group relative px-6 py-2 rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 bg-[#03030b] border border-white/10 transform-gpu">
+            <div className="absolute inset-[-250%] animate-[spin_4s_linear_infinite] opacity-100 group-hover:opacity-0 transition-opacity pointer-events-none">
               <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_120deg,#00f2ff_180deg,#bf00ff_240deg,#ff00d4_300deg,transparent_360deg)]" />
             </div>
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-[#00f2ff] via-[#bf00ff] to-[#ff00d4]" />
             <div className="absolute inset-[1.5px] bg-[#03030b] rounded-full z-0 transition-all group-hover:bg-transparent" />
-            <span className="relative z-10 text-white font-black tracking-widest text-[10px] uppercase">GET STARTED</span>
+            <a href={`https://wa.me/${phoneNumber}?text=${message}`} target="_blank" rel="noopener noreferrer" className="relative z-10 block">
+              <span className="text-white font-black tracking-widest text-[10px] uppercase">GET STARTED</span>
+            </a>
           </button>
 
-          <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center z-[110]">
+          <button 
+            onClick={() => setIsOpen(!isOpen)} 
+            className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center z-[110] touch-manipulation transform-gpu"
+          >
             <div className="flex flex-col gap-[6px] items-end">
-              <motion.span animate={isOpen ? { rotate: 45, y: 7.5, width: '22px' } : { rotate: 0, y: 0, width: '22px' }} className="h-[2px] bg-white block origin-center" />
+              <motion.span animate={isOpen ? { rotate: 45, y: 8, width: '22px' } : { rotate: 0, y: 0, width: '22px' }} className="h-[2px] bg-white block origin-center" />
               <motion.span animate={isOpen ? { opacity: 0, x: 5 } : { opacity: 1, x: 0 }} className="w-4 h-[2px] bg-white block" />
-              <motion.span animate={isOpen ? { rotate: -45, y: -7.5, width: '22px' } : { rotate: 0, y: 0, width: '14px' }} className="h-[2px] bg-white block origin-center" />
+              <motion.span animate={isOpen ? { rotate: -45, y: -8, width: '22px' } : { rotate: 0, y: 0, width: '14px' }} className="h-[2px] bg-white block origin-center" />
             </div>
           </button>
         </div>
       </motion.header>
 
-      {/* --- REVISED MOBILE MENU --- */}
       <AnimatePresence>
         {isOpen && (
           <motion.div 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }} 
-            className="fixed inset-0 z-[95] bg-[#03030b]/95 backdrop-blur-3xl flex flex-col items-center justify-center lg:hidden"
+            className="fixed inset-0 z-[95] bg-[#03030b]/95 backdrop-blur-2xl flex flex-col items-center justify-center lg:hidden touch-none"
           >
-            <nav className="flex flex-col gap-8 text-center px-6">
+            <nav className="flex flex-col gap-10 text-center px-6">
               {navLinks.map((link, i) => (
                 <motion.a 
                   key={link.name} 
-                  initial={{ opacity: 0, y: 20 }} 
+                  initial={{ opacity: 0, y: 15 }} 
                   animate={{ opacity: 1, y: 0 }} 
-                  transition={{ delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }} 
+                  transition={{ delay: i * 0.05, ease: "circOut" }} 
                   href={link.href} 
                   onClick={() => setIsOpen(false)} 
-                  className="text-2xl sm:text-3xl font-black uppercase tracking-[0.35em] text-white hover:text-[#00f2ff] active:text-[#bf00ff] transition-colors"
+                  className="text-2xl font-black uppercase tracking-[0.35em] text-white hover:text-[#00f2ff] active:scale-90 transition-transform"
                 >
                   {link.name}
                 </motion.a>
               ))}
             </nav>
-
-            {/* System Status Decoration */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="absolute bottom-12 flex flex-col items-center gap-2"
-            >
-              <div className="w-1 h-8 bg-gradient-to-b from-cyan-500 to-transparent opacity-50" />
-              <span className="text-white/20 font-mono text-[9px] tracking-[0.5em] uppercase">
-                System Core v4.0 // Online
-              </span>
-            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
