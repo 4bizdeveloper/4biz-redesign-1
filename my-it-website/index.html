@@ -1,16 +1,73 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="src/assets/images/4biz_logo.png" />
-    <link rel="apple-touch-icon" href="src/assets/images/4biz_logo.png" />
-    <link rel="shortcut icon" href="src/assets/images/4biz_logo.png" />
     
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <link rel="icon" type="image/png" href="/src/assets/images/4biz_logo.png" />
+    <link rel="apple-touch-icon" href="/src/assets/images/4biz_logo.png" />
+    <link rel="shortcut icon" href="/src/assets/images/4biz_logo.png" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#020206" />
     <title>4biz International LLC</title>
+    <meta name="description" content="Ultra-modern business solutions by 4biz International LLC." />
+
+    <style>
+      /* Force dark background before JS/Canvas boots */
+      :root {
+        --space-bg: #020206;
+      }
+      
+      html, body {
+        background-color: var(--space-bg);
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        /* Prevents side-to-side shaking during scroll */
+        overflow-x: hidden; 
+        /* Hardware acceleration trigger */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      /* Prevent jumping by making root a stable container */
+      #root {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        /* Force GPU layer to stop stuttering */
+        transform: translateZ(0);
+        will-change: opacity;
+      }
+
+      /* Custom Modern Scrollbar to match the Space Design */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--space-bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #22d3ee40;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #22d3ee90;
+      }
+    </style>
   </head>
   <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    
     <div id="root"></div>
+
     <script type="module" src="/src/main.jsx"></script>
+    
+    <link rel="modulepreload" href="/src/main.jsx" />
   </body>
 </html>
