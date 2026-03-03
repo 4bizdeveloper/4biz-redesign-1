@@ -36,11 +36,13 @@ const Footer = () => {
   ], []);
 
   return (
-    <footer 
-      ref={footerRef} 
-      className="relative z-10 bg-transparent mt-12 md:mt-24 pt-24 md:pt-48 pb-32 md:pb-40 lg:pb-48 overflow-hidden border-t border-white/5 transform-gpu"
-      style={{ contentVisibility: 'auto', contain: 'paint' }}
-    >
+// Change the <footer> opening tag in Footer.jsx:
+<footer 
+  ref={footerRef} 
+  // REDUCED: mt-12/24 to mt-4, pt-24/48 to pt-12/16, pb-32/48 to pb-12/20
+  className="relative z-10 bg-transparent mt-4 pt-12 md:pt-16 pb-12 md:pb-20 overflow-hidden border-t border-white/5 transform-gpu"
+  style={{ contentVisibility: 'auto', contain: 'paint' }}
+>
       
       {/* --- OPTIMIZED ATMOSPHERIC GRADIENTS --- */}
       {/* PERFORMANCE FIX: Combined will-change-transform with translateZ(0) for hardware isolation */}
