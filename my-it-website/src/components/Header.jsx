@@ -18,23 +18,23 @@ const Header = () => {
 
   const { scrollY } = useScroll();
   
-  // Refined spring for maximum responsiveness without jitter
+  // High-performance spring: mass and stiffness tuned to prevent jumping on mobile touch-scroll
   const smoothY = useSpring(scrollY, { 
-    stiffness: 100, 
-    damping: 20, 
-    mass: 0.2, 
+    stiffness: 120, 
+    damping: 24, 
+    mass: 0.1, 
     restDelta: 0.001 
   });
 
   const scrollRange = [0, 80];
   
-  // PERFORMANCE FIX: ScaleX/Y are GPU-accelerated; Width/Height are NOT.
+  // Optimized transforms using GPU-bound properties
   const headerScaleX = useTransform(smoothY, scrollRange, isDesktop ? [1, 0.92] : [1, 1]);
   const headerScaleY = useTransform(smoothY, scrollRange, isDesktop ? [1, 0.9] : [1, 1]);
   const headerYOffset = useTransform(smoothY, scrollRange, isDesktop ? [0, 20] : [0, 0]);
   const borderRadius = useTransform(smoothY, scrollRange, isDesktop ? ['0px', '40px'] : ['0px', '0px']);
   
-  // VISUALS: Increased transparency for a more premium glass effect
+  // Preserving existing desktop header logic exactly
   const backgroundColor = useTransform(smoothY, scrollRange, 
     isDesktop ? ['rgba(3, 3, 11, 0)', 'rgba(3, 3, 11, 0.72)'] : ['rgba(0,0,0,0)', 'rgba(0,0,0,0)']
   );
@@ -70,8 +70,8 @@ const Header = () => {
           WebkitBackdropFilter: backdropFilter,
           x: '-50%',
           left: '50%',
-          // Crucial for performance: tells the browser to promote this to its own layer
-          willChange: 'transform, background-color, backdrop-filter',
+          // Hardware acceleration fixes
+          willChange: 'transform, opacity',
           backfaceVisibility: 'hidden',
           WebkitFontSmoothing: 'antialiased',
           transformStyle: 'preserve-3d',
@@ -87,16 +87,16 @@ const Header = () => {
           </motion.div>
         )}
 
-        {/* LOGO - ml-4 (mobile) and ml-8 (desktop) */}
         <motion.a 
           href="/" 
-          style={{ scaleY: useTransform(smoothY, scrollRange, [1, 1.1]) }} // Counter-scale to keep logo crisp
           className="relative flex items-center group cursor-pointer shrink-0 transform-gpu ml-4 lg:ml-8"
         >
           <img 
             src={logo} 
-            alt="4Biz Logo" 
+            alt="4Biz International LLC" 
             loading="eager"
+            width="120"
+            height="44"
             className="h-10 lg:h-11 w-auto transition-transform duration-500 group-hover:scale-105" 
           />
         </motion.a>
@@ -145,7 +145,8 @@ const Header = () => {
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }} 
-            className="fixed inset-0 z-[95] bg-[#03030b]/95 backdrop-blur-2xl flex flex-col items-center justify-center lg:hidden touch-none"
+            // REQUESTED FIX: Changed bg-opacity to 70% (0.7) for the mobile toggle window
+            className="fixed inset-0 z-[95] bg-[#03030b]/70 backdrop-blur-2xl flex flex-col items-center justify-center lg:hidden touch-none"
           >
             <nav className="flex flex-col gap-10 text-center px-6">
               {navLinks.map((link, i) => (
