@@ -12,12 +12,11 @@ import mobileAppImg from '../assets/images/mobile-app-development.avif';
 import itConsultingImg from '../assets/images/it-consulting.avif';
 import ecommerceImg from '../assets/images/ecommerce.avif';
 
-const ServiceCard = ({ title, desc, icon, img }) => {
+const ServiceCard = ({ title, desc, icon, img, videoUrl }) => {
   const divRef = useRef(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Smooth out mouse movement to prevent "choppy" spotlight on high-DPI screens
   const smoothX = useSpring(mouseX, { stiffness: 500, damping: 50 });
   const smoothY = useSpring(mouseY, { stiffness: 500, damping: 50 });
 
@@ -34,57 +33,65 @@ const ServiceCard = ({ title, desc, icon, img }) => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      className="group relative overflow-hidden rounded-[2.5rem] border border-white/20 bg-white/[0.03] backdrop-blur-sm p-8 transition-colors duration-500 hover:border-cyan-400 transform-gpu"
-      style={{ 
-        contain: 'layout paint',
-        willChange: 'transform'
-      }}
+      className="group relative overflow-hidden rounded-[2.5rem] border border-white/20 bg-white/[0.03] backdrop-blur-sm p-6 transition-colors duration-500 hover:border-cyan-400 transform-gpu"
     >
-      {/* Background Image - Masked & Optimized */}
-      <div 
-        className="absolute inset-0 z-0 opacity-40 transition-transform duration-700 group-hover:scale-110 pointer-events-none"
-        style={{
-          backgroundImage: `url(${img})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          maskImage: 'radial-gradient(circle at center, black 30%, transparent 95%)',
-          WebkitMaskImage: 'radial-gradient(circle at center, black 30%, transparent 95%)',
-        }}
-      />
+      {/* Media Section: Shows Video if videoUrl exists, otherwise shows Image */}
+      <div className="relative h-52 mb-6 overflow-hidden rounded-2xl z-20 bg-black/20">
+        {videoUrl ? (
+          <iframe
+            className="w-full h-full"
+            src={videoUrl}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        ) : (
+          <div 
+            className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+            style={{ backgroundImage: `url(${img})` }}
+          />
+        )}
+      </div>
 
-      {/* High-Performance Dynamic Spotlight */}
+      {/* Content Section */}
+      <div className="relative z-20">
+        <div className="text-4xl mb-4 drop-shadow-lg">{icon}</div>
+        <h3 className="text-xl font-bold mb-3 text-white tracking-tight">{title}</h3>
+        <p className="text-white/70 text-sm leading-relaxed line-clamp-3">{desc}</p>
+      </div>
+
+      {/* Spotlight Effect */}
       <motion.div
-        className="pointer-events-none absolute -inset-px transition-opacity duration-300 z-10 opacity-0 group-hover:opacity-100"
+        className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity z-10"
         style={{
-          background: useMemo(() => `radial-gradient(600px circle at var(--x) var(--y), rgba(34, 211, 238, 0.15), transparent 40%)`, []),
+          background: useMemo(() => `radial-gradient(600px circle at var(--x) var(--y), rgba(34, 211, 238, 0.1), transparent 40%)`, []),
           '--x': smoothX,
           '--y': smoothY,
         }}
       />
-
-      <div className="relative z-20 pointer-events-none">
-        <div className="text-5xl mb-6 drop-shadow-lg">{icon}</div>
-        <h3 className="text-2xl font-bold mb-4 text-white tracking-tight drop-shadow-md">{title}</h3>
-        <p className="text-white text-sm md:text-base leading-relaxed font-medium drop-shadow-md opacity-90">{desc}</p>
-      </div>
-
-      {/* Decorative Overlay Gradient */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
     </motion.div>
   );
 };
 
 const Services = () => {
   const serviceData = useMemo(() => [
-    { title: "Web Development", desc: "Full-stack solutions using modern JS frameworks.", icon: "💻", img: webDevImg },
-    { title: "Digital Marketing", desc: "Comprehensive SEO, SMM, and Performance Marketing.", icon: "📊", img: digitalMarketingImg },
-    { title: "Cyber Security", desc: "Advanced security featuring AI threat monitoring.", icon: "🛡️", img: cyberSecurityImg },
-    { title: "CRM / ERP Solutions", desc: "Customized Enterprise Resource Planning and CRM software.", icon: "⚙️", img: crmErpImg },
-    { title: "Content Management", desc: "Expert CMS solutions and WordPress development.", icon: "📝", img: contentMgmtImg },
-    { title: "Domain & Hosting", desc: "Secure hosting infrastructure ensuring 99.9% uptime.", icon: "☁️", img: domainHostingImg },
-    { title: "Mobile App Dev", desc: "Custom iOS and Android applications.", icon: "📱", img: mobileAppImg },
-    { title: "IT Consulting", desc: "Strategic technical guidance for digital transformation.", icon: "🤝", img: itConsultingImg },
-    { title: "E-Commerce", desc: "Complete online store solutions with integrated payments.", icon: "🛒", img: ecommerceImg }
+    { title: "Web Design & Development", desc: "We provide complete Web Management Services, including website, email, and SEO. Partner with us for cost-effective solutions, expert support, and an optimized online presence. Our cutting-edge technology ensures your website works well on all devices, giving you a competitive edge in your industry.", icon: "💻", img: webDevImg },
+    { title: "Search Engine Optimization", desc: "In the ever-evolving digital landscape, the visibility of your business in search engine results is paramount to your online success. At 4Biz International, we understand the critical importance of Search Engine Optimization (SEO) as an integral element of your marketing strategy. Our approach goes above and beyond conventional strategies to ensure that your website not only ranks high but shines brightly in the online realm.", icon: "📊", img: digitalMarketingImg },
+    { title: "Microsoft Dynamics 365", desc: "At 4biz International, we take pride in offering an unparalleled solution to transform and empower your business—Microsoft Dynamics 365. This all-in-one platform seamlessly integrates Customer Relationship Management (CRM) and Enterprise Resource Planning (ERP), providing a unified system to streamline operations and elevate your overall business efficiency.", icon: "🛡️", img: cyberSecurityImg },
+    { title: "Social Media Marketing", desc: "In a digital landscape where social media reigns supreme, 4Biz International stands as your strategic partner to turn platforms like Facebook, Instagram, LinkedIn, and Twitter into powerful catalysts for brand success. we don't just manage social media; we craft digital narratives that elevate your brand's online presence. Our approach is a fusion of strategy, engagement, and content excellence, ensuring your brand not only stands out but thrives in the dynamic world of social media.", icon: "⚙️", img: crmErpImg },
+    { title: "Domain & Hosting", desc: "At 4Biz, we offer our own fast and reliable hosting solutions. We use cutting-edge technology and high-performance hardware for exceptional results. Our dedicated servers provide fast and dependable hosting for websites and web apps. Whether you need hosting packages, Site Lock, SSL Certificates, or Hacking Protection, we've got you covered.", icon: "☁️", img: domainHostingImg },
+    { title: "Content Marketing", desc: "In the dynamic realm of digital marketing, content reigns supreme, and at 4Biz, we understand that quality content is the heartbeat of a successful strategy. Our Content Marketing services go beyond the ordinary, incorporating key elements that ensure your brand stands out in the digital landscape. At 4Biz, we excel in delivering outstanding Content Marketing services designed to amplify your brand's digital footprint.", icon: "📝", img: contentMgmtImg },
+    
+    { title: "Email And SMS Marketing", desc: "At 4Biz, we understand the power of effective email marketing and SMS campaigns in today's digital landscape. Our comprehensive services are designed to help businesses reach their target audience, engage with customers, and drive measurable results. With our expertise in crafting compelling email content, designing eye-catching templates, and implementing strategic SMS campaigns, we ensure that your marketing messages resonate with your audience and drive conversions.", icon: "📱", img: mobileAppImg },
+    { title: "Branding", desc: "Branding is about creating a distinct image through consistent advertising to stand out, attract loyal customers, and leave an impact.We have a unique approach for building strong brands. It requires a systematic strategy to make a lasting impression. It's not just about quality; it's about how you present your brand.", icon: "🤝", img: itConsultingImg },
+    { title: "Photoshoot And Videoshoot", desc: "In the expansive realm of professional photography and video services, 4Biz emerges as your dedicated partner, committed to translating your brand vision into captivating visual stories. Our skilled team doesn't just wield technical prowess; they bring a creative passion that breathes life into every frame, transforming mere moments into an immersive visual experience.", icon: "🛒", img: ecommerceImg },
+    { title: "Photoshoot And Videoshoot", desc: "In the expansive realm of professional photography and video services, 4Biz emerges as your dedicated partner, committed to translating your brand vision into captivating visual stories. Our skilled team doesn't just wield technical prowess; they bring a creative passion that breathes life into every frame, transforming mere moments into an immersive visual experience.", icon: "🛒", img: ecommerceImg },
+    { title: "Photoshoot And Videoshoot", desc: "In the expansive realm of professional photography and video services, 4Biz emerges as your dedicated partner, committed to translating your brand vision into captivating visual stories. Our skilled team doesn't just wield technical prowess; they bring a creative passion that breathes life into every frame, transforming mere moments into an immersive visual experience.", icon: "🛒", img: ecommerceImg },
+    { title: "Photoshoot And Videoshoot", desc: "In the expansive realm of professional photography and video services, 4Biz emerges as your dedicated partner, committed to translating your brand vision into captivating visual stories. Our skilled team doesn't just wield technical prowess; they bring a creative passion that breathes life into every frame, transforming mere moments into an immersive visual experience.", icon: "🛒", img: ecommerceImg },
+    { title: "Photoshoot And Videoshoot", desc: "In the expansive realm of professional photography and video services, 4Biz emerges as your dedicated partner, committed to translating your brand vision into captivating visual stories. Our skilled team doesn't just wield technical prowess; they bring a creative passion that breathes life into every frame, transforming mere moments into an immersive visual experience.", icon: "🛒", img: ecommerceImg },
+    { title: "Photoshoot And Videoshoot", desc: "In the expansive realm of professional photography and video services, 4Biz emerges as your dedicated partner, committed to translating your brand vision into captivating visual stories. Our skilled team doesn't just wield technical prowess; they bring a creative passion that breathes life into every frame, transforming mere moments into an immersive visual experience.", icon: "🛒", img: ecommerceImg },
+    { title: "Brand Story", desc: "Watch how 4Biz International transforms digital landscapes through innovation and strategic excellence.", icon: "🎬", videoUrl: "https://www.youtube.com/embed/xwGzKRwNSA0" },
   ], []);
 
   return (
