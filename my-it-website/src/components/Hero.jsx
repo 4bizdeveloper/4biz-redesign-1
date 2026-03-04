@@ -80,7 +80,7 @@ const Hero = () => {
 
           <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
             <a href="#services"><HeroButton text="EXPLORE SERVICES" color="#00f2ff" /></a>
-            <a href={`https://wa.me/${phoneNumber}?text=${message}`}><HeroButton text="GET STARTED" color="#bf00ff" /></a>
+            <a href="#contact"><HeroButton text="GET AN APPOINTMENT" color="#bf00ff" /></a>
           </div>
         </motion.div>
       </div>

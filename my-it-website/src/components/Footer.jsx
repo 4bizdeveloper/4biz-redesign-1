@@ -6,6 +6,9 @@ import {
   RiYoutubeFill, RiTwitterXFill, RiDownloadCloud2Line 
 } from 'react-icons/ri';
 import logo_image from '../assets/images/4biz_logo.png';
+import brochure_document from '../assets/documents/4bizprofile.pdf';
+
+
 
 const Footer = () => {
   const footerRef = useRef(null);
@@ -143,11 +146,13 @@ const Footer = () => {
                 </ul>
               </nav>
               
-              <a 
-                href="/assets/images/4bizprofile.pdf" 
-                target="_blank" 
-                className="group relative flex items-center justify-between bg-white/[0.03] border border-white/10 text-white py-4 px-6 rounded-xl transition-all hover:bg-white/[0.06] transform-gpu"
-              >
+
+<a 
+  href={brochure_document}
+  target="_blank" 
+  rel="noopener noreferrer"
+  className="group relative flex items-center justify-between bg-white/[0.03] border border-white/10 text-white py-4 px-6 rounded-xl transition-all hover:bg-white/[0.06] transform-gpu"
+>
                 <div className="flex flex-col relative z-10">
                   <span className="text-[8px] uppercase tracking-[0.4em] text-cyan-400 mb-1">Access File</span>
                   <span className="text-[10px] font-black uppercase tracking-[0.2em]">Our Portfolio</span>
