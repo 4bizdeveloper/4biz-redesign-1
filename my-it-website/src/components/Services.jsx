@@ -1,16 +1,8 @@
 import React, { useRef, useState, useMemo } from 'react';
 import { motion, useMotionValue, useSpring, useInView } from 'framer-motion';
 
-// Asset Imports
-import webDevImg from '../assets/images/web-development.avif';
-import digitalMarketingImg from '../assets/images/digital-marketing.avif';
-import cyberSecurityImg from '../assets/images/cyber-security.avif';
-import crmErpImg from '../assets/images/crm-erp-software.avif';
-import contentMgmtImg from '../assets/images/content-management.avif';
-import domainHostingImg from '../assets/images/domain-hosting.avif';
-import mobileAppImg from '../assets/images/mobile-app-development.avif';
-import itConsultingImg from '../assets/images/it-consulting.avif';
-import ecommerceImg from '../assets/images/ecommerce.avif';
+
+const serviceImages = import.meta.glob('../assets/images/services/*.{png,jpg,jpeg,svg,avif}', { eager: true, import: 'default' });
 
 const ServiceCard = ({ title, desc, icon, img, videoUrl }) => {
   const divRef = useRef(null);
@@ -77,21 +69,73 @@ const ServiceCard = ({ title, desc, icon, img, videoUrl }) => {
 const Services = () => {
   const serviceData = useMemo(() => 
     [
-    { title: "Web Design & Development", desc: "We provide complete Web Management Services, including website, email, and SEO. Partner with us for cost-effective solutions, expert support, and an optimized online presence. Our cutting-edge technology ensures your website works well on all devices, giving you a competitive edge in your industry.", icon: "🌐", img: webDevImg },
-    { title: "Search Engine Optimization", desc: "In the ever-evolving digital landscape, the visibility of your business in search engine results is paramount to your online success. At 4Biz International, we understand the critical importance of Search Engine Optimization (SEO) as an integral element of your marketing strategy. Our approach goes above and beyond conventional strategies to ensure that your website not only ranks high but shines brightly in the online realm.", icon: "🚀", img: digitalMarketingImg },
-    { title: "Microsoft Dynamics 365", desc: "At 4biz International, we take pride in offering an unparalleled solution to transform and empower your business—Microsoft Dynamics 365. This all-in-one platform seamlessly integrates Customer Relationship Management (CRM) and Enterprise Resource Planning (ERP), providing a unified system to streamline operations and elevate your overall business efficiency.", icon: "♾️", img: cyberSecurityImg },
-    { title: "Social Media Marketing", desc: "In a digital landscape where social media reigns supreme, 4Biz International stands as your strategic partner to turn platforms like Facebook, Instagram, LinkedIn, and Twitter into powerful catalysts for brand success. we don't just manage social media; we craft digital narratives that elevate your brand's online presence. Our approach is a fusion of strategy, engagement, and content excellence, ensuring your brand not only stands out but thrives in the dynamic world of social media.", icon: "📢", img: crmErpImg },
-    { title: "Domain & Hosting", desc: "At 4Biz, we offer our own fast and reliable hosting solutions. We use cutting-edge technology and high-performance hardware for exceptional results. Our dedicated servers provide fast and dependable hosting for websites and web apps. Whether you need hosting packages, Site Lock, SSL Certificates, or Hacking Protection, we've got you covered.", icon: "☁️", img: domainHostingImg },
-    { title: "Content Marketing", desc: "In the dynamic realm of digital marketing, content reigns supreme, and at 4Biz, we understand that quality content is the heartbeat of a successful strategy. Our Content Marketing services go beyond the ordinary, incorporating key elements that ensure your brand stands out in the digital landscape. At 4Biz, we excel in delivering outstanding Content Marketing services designed to amplify your brand's digital footprint.", icon: "✍️", img: contentMgmtImg },
+    { 
+      title: "Web Design & Development", 
+      desc: "We provide complete Web Management Services, including website, email, and SEO. Partner with us for cost-effective solutions, expert support, and an optimized online presence. Our cutting-edge technology ensures your website works well on all devices, giving you a competitive edge in your industry.", 
+      icon: "🌐",
+      img: serviceImages['../assets/images/services/webdevelopment.avif'] 
+    },
+    { title: "Search Engine Optimization", desc: "In the ever-evolving digital landscape, the visibility of your business in search engine results is paramount to your online success. At 4Biz International, we understand the critical importance of Search Engine Optimization (SEO) as an integral element of your marketing strategy. Our approach goes above and beyond conventional strategies to ensure that your website not only ranks high but shines brightly in the online realm.",
+      icon: "🚀",
+      img: serviceImages['../assets/images/services/seo.avif'] 
+    },
+    { title: "Microsoft Dynamics 365",
+      desc: "At 4biz International, we take pride in offering an unparalleled solution to transform and empower your business—Microsoft Dynamics 365. This all-in-one platform seamlessly integrates Customer Relationship Management (CRM) and Enterprise Resource Planning (ERP), providing a unified system to streamline operations and elevate your overall business efficiency.",
+      icon: "♾️",
+      img: serviceImages['../assets/images/services/microsoftdynamic365.avif'] 
+    },
+    { title: "Social Media Marketing",
+      desc: "In a digital landscape where social media reigns supreme, 4Biz International stands as your strategic partner to turn platforms like Facebook, Instagram, LinkedIn, and Twitter into powerful catalysts for brand success. we don't just manage social media; we craft digital narratives that elevate your brand's online presence. Our approach is a fusion of strategy, engagement, and content excellence, ensuring your brand not only stands out but thrives in the dynamic world of social media.", 
+      icon: "📢", 
+      img: serviceImages['../assets/images/services/socialmediamrketing.avif'] 
+    },
+    { title: "Domain & Hosting", 
+      desc: "At 4Biz, we offer our own fast and reliable hosting solutions. We use cutting-edge technology and high-performance hardware for exceptional results. Our dedicated servers provide fast and dependable hosting for websites and web apps. Whether you need hosting packages, Site Lock, SSL Certificates, or Hacking Protection, we've got you covered.", 
+      icon: "☁️", 
+      img: serviceImages['../assets/images/services/domainandhosting.avif'] 
+    },
+    { title: "Content Marketing", 
+      desc: "In the dynamic realm of digital marketing, content reigns supreme, and at 4Biz, we understand that quality content is the heartbeat of a successful strategy. Our Content Marketing services go beyond the ordinary, incorporating key elements that ensure your brand stands out in the digital landscape. At 4Biz, we excel in delivering outstanding Content Marketing services designed to amplify your brand's digital footprint.", 
+      icon: "✍️", 
+      img: serviceImages['../assets/images/services/contentmarketing.avif'] },
     
-    { title: "Email And SMS Marketing", desc: "At 4Biz, we understand the power of effective email marketing and SMS campaigns in today's digital landscape. Our comprehensive services are designed to help businesses reach their target audience, engage with customers, and drive measurable results. With our expertise in crafting compelling email content, designing eye-catching templates, and implementing strategic SMS campaigns, we ensure that your marketing messages resonate with your audience and drive conversions.", icon: "📩", img: mobileAppImg },
-    { title: "Branding", desc: "Branding is about creating a distinct image through consistent advertising to stand out, attract loyal customers, and leave an impact.We have a unique approach for building strong brands. It requires a systematic strategy to make a lasting impression. It's not just about quality; it's about how you present your brand.", icon: "💎", img: itConsultingImg },
-    { title: "Photoshoot And Videoshoot", desc: "In the expansive realm of professional photography and video services, 4Biz emerges as your dedicated partner, committed to translating your brand vision into captivating visual stories. Our skilled team doesn't just wield technical prowess; they bring a creative passion that breathes life into every frame, transforming mere moments into an immersive visual experience.", icon: "📸", img: ecommerceImg },
-    { title: "CRM Software", desc: "At 4Biz International, we present a cutting-edge CRM (Customer Relationship Management) software solution designed to revolutionize how you manage and nurture customer relationships. Our CRM is not just a tool; it's a dynamic ecosystem equipped to enhance your customer management to unique levels", icon: "👥", img: ecommerceImg },
-    { title: "IT Infrastructure", desc: "We specialize in modern, cost-effective IT infrastructure solutions, including structured cabling, networking, security, servers, and more. Our services also encompass system integration and managed services to support your business.", icon: "🏗️", img: ecommerceImg },
-    { title: "Mobile App Development", desc: "Embark on a journey of digital transformation with 4Biz International as your dedicated innovation partner. We cater to entrepreneurs, businesses, and startups, managing the entire app development cycle from concept to a fully realized product. Our skilled team specializes in delivering strategically designed mobile app solutions, poised to elevate your business in the dynamic digital landscape.", icon: "📲", img: ecommerceImg },
-    { title: "CMS Software", desc: "At 4Biz International, we bring you the power of advanced CMS (Content Management System) technology for seamless and efficient digital content management. Our solutions cater to both enterprise and web content needs, fostering workplace collaboration through integrated document and asset management.", icon: "📁", img: ecommerceImg },
-    { title: "4Biz ERP Solutions", desc: "4Biz ERP stands as a flexible and comprehensive solution meticulously designed to meet the unique needs of retail, supply chain distribution, and manufacturing industries. Tailor your ERP experience by selecting the modules that align with your business requirements, and scale up effortlessly as your business grows. With 4Biz ERP, optimize your investments and unlock a new era of operational efficiency.", icon: "⚙️", img: ecommerceImg },
+    { title: "Email And SMS Marketing", 
+      desc: "At 4Biz, we understand the power of effective email marketing and SMS campaigns in today's digital landscape. Our comprehensive services are designed to help businesses reach their target audience, engage with customers, and drive measurable results. With our expertise in crafting compelling email content, designing eye-catching templates, and implementing strategic SMS campaigns, we ensure that your marketing messages resonate with your audience and drive conversions.", 
+      icon: "📩", img: serviceImages['../assets/images/services/emailandsmsmarketing.avif'] 
+    },
+    { title: "Branding", 
+      desc: "Branding is about creating a distinct image through consistent advertising to stand out, attract loyal customers, and leave an impact.We have a unique approach for building strong brands. It requires a systematic strategy to make a lasting impression. It's not just about quality; it's about how you present your brand.", 
+      icon: "💎", img: serviceImages['../assets/images/services/branding.avif'] 
+    },
+    { title: "Photoshoot And Videoshoot", 
+      desc: "In the expansive realm of professional photography and video services, 4Biz emerges as your dedicated partner, committed to translating your brand vision into captivating visual stories. Our skilled team doesn't just wield technical prowess; they bring a creative passion that breathes life into every frame, transforming mere moments into an immersive visual experience.", 
+      icon: "📸", 
+      img: serviceImages['../assets/images/services/photoshootandvideoshoot.avif'] 
+    },
+    { title: "CRM Software", 
+      desc: "At 4Biz International, we present a cutting-edge CRM (Customer Relationship Management) software solution designed to revolutionize how you manage and nurture customer relationships. Our CRM is not just a tool; it's a dynamic ecosystem equipped to enhance your customer management to unique levels", 
+      icon: "👥", img: serviceImages['../assets/images/services/crmsoftware.avif'] 
+    },
+    { title: "IT Infrastructure", 
+      desc: "We specialize in modern, cost-effective IT infrastructure solutions, including structured cabling, networking, security, servers, and more. Our services also encompass system integration and managed services to support your business.", 
+      icon: "🏗️", 
+      img: serviceImages['../assets/images/services/itinfrastructure.avif'] 
+    },
+    { title: "Mobile App Development", 
+      desc: "Embark on a journey of digital transformation with 4Biz International as your dedicated innovation partner. We cater to entrepreneurs, businesses, and startups, managing the entire app development cycle from concept to a fully realized product. Our skilled team specializes in delivering strategically designed mobile app solutions, poised to elevate your business in the dynamic digital landscape.", 
+      icon: "📲", 
+      img: serviceImages['../assets/images/services/mobileappdevelopment.avif'] 
+    },
+    { title: "CMS Software", 
+      desc: "At 4Biz International, we bring you the power of advanced CMS (Content Management System) technology for seamless and efficient digital content management. Our solutions cater to both enterprise and web content needs, fostering workplace collaboration through integrated document and asset management.", 
+      icon: "📁", 
+      img: serviceImages['../assets/images/services/cmssoftware.avif'] 
+    },
+    { title: "4Biz ERP Solutions", 
+      desc: "4Biz ERP stands as a flexible and comprehensive solution meticulously designed to meet the unique needs of retail, supply chain distribution, and manufacturing industries. Tailor your ERP experience by selecting the modules that align with your business requirements, and scale up effortlessly as your business grows. With 4Biz ERP, optimize your investments and unlock a new era of operational efficiency.", 
+      icon: "⚙️", 
+      img: serviceImages['../assets/images/services/4bizerpsolutions.avif'] 
+    },
     { title: "Brand Story", desc: "At 4Biz International, we see a digital landscape full of untapped potential. We transform that potential into performance by merging cutting-edge technological innovation with master-class strategic planning. Our mission is to scale your vision, optimize your operations, and ensure your business doesn't just survive the digital evolution—it leads it.", icon: "🎬", videoUrl: "https://www.youtube.com/embed/xwGzKRwNSA0" },
    ]
   , []);
