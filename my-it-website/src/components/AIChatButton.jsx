@@ -35,9 +35,9 @@ const AIChatButton = () => {
     setIsThinking(true);
 
     try {
-      const genAI = new GoogleGenerativeAI("AIzaSyBAMgUlhGdc4KAEk-Q3zqqXPD7ttidFCsk");
+      const genAI = new GoogleGenerativeAI("AIzaSyDpRn3f-DnM6QGtEf62aO52AHxzmsx9-Mk");
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
+        model: "gemini-3-flash-preview",
         systemInstruction: SYSTEM_PROMPT 
       });
 
